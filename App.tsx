@@ -6,6 +6,9 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import DetailScreen from "./screens/DetailScreen";
 import Home from "./screens/Home";
 import SwipeScreen from "./screens/Swipescreen";
+import CreateNewGroup from "./screens/ChooseMovieService";
+import ChooseGenre from "./screens/ChooseGenre";
+import CreateGroup from "./screens/CreateGroup";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -19,6 +22,39 @@ export default function App() {
         />
         <Stack.Screen name="Details" component={DetailScreen} />
         <Stack.Screen name="SwipeScreen" component={SwipeScreen} />
+        <Stack.Screen
+          name="CreateNewGroupScreen"
+          component={CreateNewGroup}
+          options={{
+            headerShown: true,
+            title: "Choose Movie Services",
+            headerStyle: {
+              backgroundColor: "#FDDA0D",
+            },
+          }}
+        />
+        <Stack.Screen
+          name="ChooseGenre"
+          component={ChooseGenre}
+          options={{
+            headerShown: true,
+            title: "Choose Movie Services",
+            headerStyle: {
+              backgroundColor: "#FDDA0D",
+            },
+          }}
+        />
+        <Stack.Screen
+          name="CreateGroup"
+          component={CreateGroup}
+          options={{
+            headerShown: true,
+            title: "Choose Movie Services",
+            headerStyle: {
+              backgroundColor: "#FDDA0D",
+            },
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
