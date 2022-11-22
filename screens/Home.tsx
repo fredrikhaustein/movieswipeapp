@@ -17,7 +17,7 @@ export const HomeScreen = ({ navigation }: any) => {
   const [errorWithGroupID, setErrorWithGroupID] = useState<boolean>(false);
 
   const handleOnJoinGroup = async () => {
-    console.log("her er groupid", groupID);
+    console.log("here is your groupid", groupID);
 
     const allGroupIds: string[] = [];
 
@@ -30,7 +30,7 @@ export const HomeScreen = ({ navigation }: any) => {
     console.log(allGroupIds);
 
     if (groupID && allGroupIds.includes(groupID)) {
-      navigation.navigate("Details");
+      navigation.navigate("Waiting");
     } else {
       setErrorWithGroupID(true);
     }
@@ -46,16 +46,24 @@ export const HomeScreen = ({ navigation }: any) => {
         justifyContent: "center",
         backgroundColor: "#FDDA0D",
       }}
-    >
+      >
       <Text style={{ fontSize: 40, margin: 10 }}>Welcome to Movieswiper</Text>
       <Text style={styles.textField}>Group Code:</Text>
       <TextInput
         placeholder="CODE"
         keyboardType="numeric"
-        onChangeText={(value) => setGroupID(value)}
+        onChangeText={(value) => {
+          setGroupID(value)
+          setErrorWithGroupID(false)
+        }}
         maxLength={6}
         style={styles.inputField}
-      />
+        />
+        <View>
+          {errorWithGroupID && (
+            <Text>You have Written the wrong Code </Text>
+            )}
+        </View>
       <TouchableOpacity style={styles.button} onPress={handleOnJoinGroup}>
         <Text style={styles.textField_button}>Join</Text>
       </TouchableOpacity>
@@ -68,40 +76,11 @@ export const HomeScreen = ({ navigation }: any) => {
       {/* <Button
         title="Go to Details"
         onPress={() => navigation.navigate("Details")}
-      />*/
+      />
       <Button
         title="Go to swipecard"
         onPress={() => navigation.navigate("SwipeScreen")}
-      /> }
-      <View>
-        {errorWithGroupID && (
-          <Modal
-            animationType="none"
-            transparent={false}
-            visible={errorWithGroupID}
-            onRequestClose={() => {
-              setErrorWithGroupID(!errorWithGroupID);
-            }}
-            style={{ height: 400, width: 400, backgroundColor: "#FF0000" }}
-          >
-            <View
-              style={{
-                flex: 1,
-                alignItems: "center",
-                justifyContent: "center",
-                height: 300,
-                width: 400,
-              }}
-            >
-              <Text>You have written the wrong code</Text>
-              <Button
-                title="Close"
-                onPress={() => setErrorWithGroupID(!errorWithGroupID)}
-              />
-            </View>
-          </Modal>
-        )}
-      </View>
+      /> */}
     </View>
   );
 };
