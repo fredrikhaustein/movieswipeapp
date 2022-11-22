@@ -68,11 +68,11 @@ export const HomeScreen = ({ navigation }: any) => {
       {/* <Button
         title="Go to Details"
         onPress={() => navigation.navigate("Details")}
-      />
+      />*/
       <Button
         title="Go to swipecard"
         onPress={() => navigation.navigate("SwipeScreen")}
-      /> */}
+      /> }
       <View>
         {errorWithGroupID && (
           <Modal
