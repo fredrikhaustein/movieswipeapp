@@ -8,6 +8,7 @@ import SwipeScreen from "./screens/Swipescreen";
 import CreateNewGroup from "./screens/ChooseMovieService";
 import ChooseGenre from "./screens/ChooseGenre";
 import CreateGroup from "./screens/CreateGroup";
+import WaitingScreen from "./screens/WaitingScreen";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -21,6 +22,7 @@ export default function App() {
         />
         <Stack.Screen name="Details" component={DetailScreen} />
         <Stack.Screen name="SwipeScreen" component={SwipeScreen} />
+        <Stack.Screen name="Waiting" component={WaitingScreen}/>
         <Stack.Screen
           name="CreateNewGroupScreen"
           component={CreateNewGroup}

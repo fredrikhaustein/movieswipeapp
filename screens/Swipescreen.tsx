@@ -1,6 +1,4 @@
-import { Button } from "react-native";
-import { db, firebaseAuth } from "../firebaseConfig";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   View,
   ScrollView,
@@ -8,27 +6,69 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
+  Animated,
+  PanResponder,
 } from "react-native";
 import { Icon } from "@rneui/themed";
 
-export const SwipeScreen = ({ navigation }: any) => {
+export const SwipeScreen = () => {
   const [showInfoBool, setShowInfoBool] = useState<boolean>(false);
   const [movieNumber, setMovieNumber] = useState<number>(0);
+  const countRef = useRef(0);
 
-  const auth = firebaseAuth;
-  console.log(auth.currentUser);
-  const nextImage = () => {
-    if (movieNumber >= movies.length - 1) {
-      setMovieNumber(0);
+  function nextImage() {
+    if (countRef.current >= movies.length - 1) {
+      countRef.current = 0;
+      setMovieNumber(countRef.current);
     } else {
-      setMovieNumber(movieNumber + 1);
+      countRef.current = countRef.current + 1;
+      setMovieNumber(countRef.current);
     }
-  };
+  }
 
   const showInfo = () => {
-    console.log("Show Info ");
     setShowInfoBool(!showInfoBool);
   };
+
+  const pan = useRef(new Animated.ValueXY()).current;
+  function resetPos() {
+    Animated.timing(pan, {
+      toValue: { x: 0, y: 0 },
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+  }
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (event, gestureState) => {
+        const { dx, dy } = gestureState;
+        // return true if user is swiping, return false if it's a single click
+        return Math.abs(dx) !== 0 && Math.abs(dy) !== 0;
+      },
+      onMoveShouldSetPanResponderCapture: (event, gestureState) => {
+        const { dx, dy } = gestureState;
+        // return true if user is swiping, return false if it's a single click
+        return Math.abs(dx) !== 0 && Math.abs(dy) !== 0;
+      },
+      onPanResponderTerminationRequest: () => false,
+      onPanResponderGrant: () => {
+        pan.setValue({ x: 0, y: 0 });
+      },
+      onPanResponderMove: (event, gesture) => {
+        const x = gesture.dx;
+        const y = gesture.dy;
+        pan.setValue({ x, y });
+      },
+      onPanResponderEnd: (e, gestureState) => {
+        pan.flattenOffset();
+        resetPos();
+        if (Math.abs(gestureState.dx) > 120) {
+          nextImage();
+        }
+      },
+    })
+  ).current;
+
   return (
     <>
       <View
@@ -40,10 +80,17 @@ export const SwipeScreen = ({ navigation }: any) => {
         }}
       >
         {!showInfoBool ? (
-          <Image
-            source={{ uri: movies[movieNumber]["posterURLs"]["original"] }}
-            style={{ width: 320, height: 440 }}
-          />
+          <Animated.View
+            style={{
+              transform: [{ translateX: pan.x }, { translateY: pan.y }],
+            }}
+            {...panResponder.panHandlers}
+          >
+            <Image
+              source={{ uri: movies[movieNumber]["posterURLs"]["original"] }}
+              style={{ width: 320, height: 500 }}
+            />
+          </Animated.View>
         ) : (
           <ScrollView>
             <Text style={styles.textFieldTop}>
@@ -53,7 +100,9 @@ export const SwipeScreen = ({ navigation }: any) => {
               IMBD rating: {movies[movieNumber]["imdbRating"]}
             </Text>
             {movies[movieNumber]["cast"].slice(0, 3).map((cast) => (
-              <Text style={styles.textField}>{cast}</Text>
+              <Text style={styles.textField} key={cast}>
+                {cast}
+              </Text>
             ))}
             <Text style={styles.textField}>
               {movies[movieNumber]["overview"]}
