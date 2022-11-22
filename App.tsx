@@ -1,4 +1,3 @@
-import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
@@ -30,6 +29,7 @@ export default function App() {
           options={{
             headerShown: true,
             title: "Choose Movie Services",
+            headerTintColor: "black",
             headerStyle: {
               backgroundColor: "#FDDA0D",
             },
@@ -40,7 +40,8 @@ export default function App() {
           component={ChooseGenre}
           options={{
             headerShown: true,
-            title: "Choose Movie Services",
+            title: "Choose Genre",
+            headerTintColor: "black",
             headerStyle: {
               backgroundColor: "#FDDA0D",
             },
@@ -51,7 +52,8 @@ export default function App() {
           component={CreateGroup}
           options={{
             headerShown: true,
-            title: "Choose Movie Services",
+            title: "",
+            headerTintColor: "black",
             headerStyle: {
               backgroundColor: "#FDDA0D",
             },
