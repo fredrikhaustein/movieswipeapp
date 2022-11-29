@@ -1,4 +1,5 @@
 import { View, Text } from "react-native"
+import { COLORS } from "../values/colors"
 
 export const WaitingScreen = ({ navigation }: any) => 
 {
@@ -10,7 +11,7 @@ export const WaitingScreen = ({ navigation }: any) =>
                 flex: 4,
                 alignItems: "center",
                 justifyContent: "center",
-                backgroundColor: "#FDDA0D",
+                backgroundColor: COLORS.yellow,
             }}
             //Dummy for å komme videre til Filmserver
             onTouchEnd={() => {

@@ -3,6 +3,7 @@ import { CheckBox } from "@rneui/themed";
 import React, { useState } from "react";
 import { useStoreMovieFilters } from "../store/MovieFilter";
 import { streamingServiceList } from "../utils/movieSelectionList";
+import { COLORS } from "../values/colors";
 
 export const ChooseMovieService = ({ navigation }: any) => {
   const streamingService = useStoreMovieFilters(
@@ -32,7 +33,7 @@ export const ChooseMovieService = ({ navigation }: any) => {
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#FDDA0D",
+        backgroundColor: COLORS.yellow,
       }}
     >
       <Text style={{ fontSize: 25 }}>Choose ONE streaming service</Text>
@@ -66,7 +67,7 @@ export default ChooseMovieService;
 const styles = StyleSheet.create({
   checkboxStyle: {
     margin: 15,
-    backgroundColor: "#FDDA0D",
+    backgroundColor: COLORS.yellow,
     width: 250,
   },
   checkboxTextStyle: {
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 20,
     marginBottom: 10,
-    color: "#FDDA0D",
+    color: COLORS.yellow,
   },
   button: {
     alignItems: "center",
@@ -87,8 +88,8 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 32,
     elevation: 3,
-    borderColor: "black",
-    backgroundColor: "black",
+    borderColor: COLORS.black,
+    backgroundColor: COLORS.black,
     borderRadius: 10,
     margin: 10,
   },

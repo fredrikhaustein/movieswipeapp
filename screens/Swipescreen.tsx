@@ -10,6 +10,7 @@ import {
   PanResponder,
 } from "react-native";
 import { Icon } from "@rneui/themed";
+import { COLORS } from "../values/colors";
 
 export const SwipeScreen = () => {
   const [showInfoBool, setShowInfoBool] = useState<boolean>(false);
@@ -76,7 +77,7 @@ export const SwipeScreen = () => {
           flex: 4,
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#FDDA0D",
+          backgroundColor: COLORS.yellow,
         }}
       >
         {!showInfoBool ? (
@@ -116,17 +117,17 @@ export const SwipeScreen = () => {
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#FDDA0D",
+          backgroundColor: COLORS.yellow,
         }}
       >
         <TouchableOpacity style={styles.button} onPress={nextImage}>
-          <Icon name="close" color="#FDDA0D" />
+          <Icon name="close" color={COLORS.yellow} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={showInfo}>
-          <Icon name="info" color="#FDDA0D" />
+          <Icon name="info" color={COLORS.yellow} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={nextImage}>
-          <Icon name="check" color="#FDDA0D" />
+          <Icon name="check" color={COLORS.yellow} />
         </TouchableOpacity>
       </View>
     </>
@@ -152,8 +153,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 20,
     elevation: 3,
-    borderColor: "black",
-    backgroundColor: "black",
+    borderColor: COLORS.black,
+    backgroundColor: COLORS.black,
     borderRadius: 400,
     margin: 20,
   },

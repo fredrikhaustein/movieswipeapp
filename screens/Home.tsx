@@ -19,6 +19,7 @@ import {
 import { db, firebaseAuth } from "../firebaseConfig";
 import { signInAnonymously } from "firebase/auth";
 import { doc, updateDoc } from "firebase/firestore";
+import { COLORS } from "../values/colors";
 
 export const HomeScreen = ({ navigation }: any) => {
   const [groupID, setGroupID] = useState<string>();
@@ -70,7 +71,7 @@ export const HomeScreen = ({ navigation }: any) => {
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#FDDA0D",
+        backgroundColor: COLORS.yellow,
       }}
     >
       <Text style={{ fontSize: 40, margin: 10 }}>Welcome to Movieswiper</Text>
@@ -113,7 +114,7 @@ export default HomeScreen;
 
 const styles = StyleSheet.create({
   inputField: {
-    borderColor: "black",
+    borderColor: COLORS.black,
     width: "80%",
     height: "10%",
     borderWidth: 1,
@@ -132,7 +133,7 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 20,
     marginBottom: 10,
-    color: "#FDDA0D",
+    color: COLORS.yellow,
   },
   button: {
     alignItems: "center",
@@ -140,8 +141,8 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 32,
     elevation: 3,
-    borderColor: "black",
-    backgroundColor: "black",
+    borderColor: COLORS.black,
+    backgroundColor: COLORS.black,
     borderRadius: 10,
     margin: 10,
   },

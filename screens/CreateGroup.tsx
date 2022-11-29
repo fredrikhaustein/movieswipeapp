@@ -12,6 +12,7 @@ import { db, firebaseAuth } from "../firebaseConfig";
 import { genreateGroupID } from "../utils/genreateGroupID";
 import { useStoreMovieFilters } from "../store/MovieFilter";
 import { signInAnonymously } from "firebase/auth";
+import { COLORS } from "../values/colors";
 
 export const CreateGroup = ({ navigation }: any) => {
   const [pressedCreateNewGroup, setPressedCreateNewGroup] = useState(false);
@@ -84,7 +85,7 @@ export const CreateGroup = ({ navigation }: any) => {
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#FDDA0D",
+        backgroundColor: COLORS.yellow,
       }}
     >
       {pressedCreateNewGroup ? (
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 20,
     marginBottom: 10,
-    color: "#FDDA0D",
+    color: COLORS.yellow,
   },
   button: {
     alignItems: "center",
@@ -122,8 +123,8 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 32,
     elevation: 3,
-    borderColor: "black",
-    backgroundColor: "black",
+    borderColor: COLORS.black,
+    backgroundColor: COLORS.black,
     borderRadius: 10,
     margin: 10,
   },
