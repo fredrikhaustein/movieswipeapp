@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import {
-  Button,
   View,
   Text,
   TextInput,
-  Modal,
-  Alert,
   StyleSheet,
   TouchableOpacity,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import {
   arrayUnion,
@@ -53,10 +52,10 @@ export const HomeScreen = ({ navigation }: any) => {
       allGroupIds.push(doc.id);
     });
     console.log(allGroupIds);
-    handleSignIn();
-    handleAddUserToFireStore();
 
     if (groupID && allGroupIds.includes(groupID)) {
+      handleSignIn();
+      handleAddUserToFireStore();
       navigation.navigate("Waiting");
     } else {
       setErrorWithGroupID(true);
@@ -66,47 +65,53 @@ export const HomeScreen = ({ navigation }: any) => {
   useEffect(() => console.log(groupID), [groupID]);
 
   return (
-    <View
-      style={{
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: COLORS.yellow,
-      }}
-    >
-      <Text style={{ fontSize: 40, margin: 10 }}>Welcome to Movieswiper</Text>
-      <Text style={styles.textField}>Group Code:</Text>
-      <TextInput
-        placeholder="CODE"
-        keyboardType="numeric"
-        onChangeText={(value) => {
-          setGroupID(value);
-          setErrorWithGroupID(false);
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={true}>
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: COLORS.yellow,
         }}
-        maxLength={6}
-        style={styles.inputField}
-      />
-      <View>
-        {errorWithGroupID && <Text>You have Written the wrong Code </Text>}
-      </View>
-      <TouchableOpacity style={styles.button} onPress={handleOnJoinGroup}>
-        <Text style={styles.textField_button}>Join</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("CreateNewGroupScreen")}
       >
-        <Text style={styles.textField_button}>Create new group</Text>
-      </TouchableOpacity>
-      {/* <Button
+        <View>
+          <Text style={{ fontSize: 40, margin: 10, textAlign: "center" }}>
+            Welcome to Movieswiper
+          </Text>
+          <Text style={styles.textField}>Group Code:</Text>
+          <TextInput
+            placeholder="CODE"
+            keyboardType="numeric"
+            onChangeText={(value) => {
+              setGroupID(value);
+              setErrorWithGroupID(false);
+            }}
+            maxLength={6}
+            style={styles.inputField}
+          />
+          <View>
+            {errorWithGroupID && <Text>You have Written the wrong Code </Text>}
+          </View>
+        </View>
+        <TouchableOpacity style={styles.button} onPress={handleOnJoinGroup}>
+          <Text style={styles.textField_button}>Join</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate("CreateNewGroupScreen")}
+        >
+          <Text style={styles.textField_button}>Create new group</Text>
+        </TouchableOpacity>
+        {/* <Button
         title="Go to Details"
         onPress={() => navigation.navigate("Details")}
       />
       <Button
-        title="Go to swipecard"
-        onPress={() => navigation.navigate("SwipeScreen")}
-      /> */}
-    </View>
+      title="Go to swipecard"
+      onPress={() => navigation.navigate("SwipeScreen")}
+    /> */}
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -115,8 +120,8 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   inputField: {
     borderColor: COLORS.black,
-    width: "80%",
-    height: "10%",
+    width: 200,
+    height: 60,
     borderWidth: 1,
     borderRadius: 10,
     padding: 10,
@@ -128,6 +133,7 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 20,
     marginBottom: 10,
+    textAlign: "center",
   },
   textField_button: {
     padding: 10,
