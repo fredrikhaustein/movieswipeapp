@@ -77,7 +77,7 @@ export const SwipeScreen = () => {
           flex: 4,
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: COLORS.yellow,
+          backgroundColor: COLORS.background,
         }}
       >
         {!showInfoBool ? (
@@ -117,17 +117,17 @@ export const SwipeScreen = () => {
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: COLORS.yellow,
+          backgroundColor: COLORS.background,
         }}
       >
         <TouchableOpacity style={styles.button} onPress={nextImage}>
-          <Icon name="close" color={COLORS.yellow} />
+          <Icon name="close" color={COLORS.background} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={showInfo}>
-          <Icon name="info" color={COLORS.yellow} />
+          <Icon name="info" color={COLORS.background} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={nextImage}>
-          <Icon name="check" color={COLORS.yellow} />
+          <Icon name="check" color={COLORS.background} />
         </TouchableOpacity>
       </View>
     </>
@@ -153,8 +153,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 20,
     elevation: 3,
-    borderColor: COLORS.black,
-    backgroundColor: COLORS.black,
+    borderColor: COLORS.main,
+    backgroundColor: COLORS.main,
     borderRadius: 400,
     margin: 20,
   },

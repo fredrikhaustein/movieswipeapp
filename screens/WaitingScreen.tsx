@@ -11,7 +11,7 @@ export const WaitingScreen = ({ navigation }: any) =>
                 flex: 4,
                 alignItems: "center",
                 justifyContent: "center",
-                backgroundColor: COLORS.yellow,
+                backgroundColor: COLORS.background,
             }}
             //Dummy for å komme videre til Filmserver
             onTouchEnd={() => {

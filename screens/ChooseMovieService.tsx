@@ -33,7 +33,7 @@ export const ChooseMovieService = ({ navigation }: any) => {
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: COLORS.yellow,
+        backgroundColor: COLORS.background,
       }}
     >
       <Text style={{ fontSize: 25 }}>Choose ONE streaming service</Text>
@@ -67,7 +67,7 @@ export default ChooseMovieService;
 const styles = StyleSheet.create({
   checkboxStyle: {
     margin: 15,
-    backgroundColor: COLORS.yellow,
+    backgroundColor: COLORS.background,
     width: 250,
   },
   checkboxTextStyle: {
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 20,
     marginBottom: 10,
-    color: COLORS.yellow,
+    color: COLORS.background,
   },
   button: {
     alignItems: "center",
@@ -88,8 +88,8 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 32,
     elevation: 3,
-    borderColor: COLORS.black,
-    backgroundColor: COLORS.black,
+    borderColor: COLORS.main,
+    backgroundColor: COLORS.main,
     borderRadius: 10,
     margin: 10,
   },

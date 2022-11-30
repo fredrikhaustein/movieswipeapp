@@ -9,6 +9,7 @@ import CreateNewGroup from "./screens/ChooseMovieService";
 import ChooseGenre from "./screens/ChooseGenre";
 import CreateGroup from "./screens/CreateGroup";
 import WaitingScreen from "./screens/WaitingScreen";
+import { COLORS } from "./values/colors";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -29,9 +30,9 @@ export default function App() {
           options={{
             headerShown: true,
             title: "Choose Movie Services",
-            headerTintColor: "black",
+            headerTintColor: COLORS.main,
             headerStyle: {
-              backgroundColor: "#FDDA0D",
+              backgroundColor: COLORS.background,
             },
           }}
         />
@@ -41,9 +42,9 @@ export default function App() {
           options={{
             headerShown: true,
             title: "Choose Genre",
-            headerTintColor: "black",
+            headerTintColor: COLORS.main,
             headerStyle: {
-              backgroundColor: "#FDDA0D",
+              backgroundColor: COLORS.background,
             },
           }}
         />
@@ -53,9 +54,9 @@ export default function App() {
           options={{
             headerShown: true,
             title: "",
-            headerTintColor: "black",
+            headerTintColor: COLORS.main,
             headerStyle: {
-              backgroundColor: "#FDDA0D",
+              backgroundColor: COLORS.background,
             },
           }}
         />
@@ -67,7 +68,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
   },

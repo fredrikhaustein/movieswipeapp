@@ -8,7 +8,7 @@ export const DetailsScreen = ({ navigation }: any) => {
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: COLORS.yellow,
+        backgroundColor: COLORS.background,
       }}
     >
       <Text>Details Screen</Text>
