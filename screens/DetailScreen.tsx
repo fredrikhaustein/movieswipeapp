@@ -1,4 +1,5 @@
 import { Button, View, Text } from "react-native";
+import { COLORS } from "../values/colors";
 
 export const DetailsScreen = ({ navigation }: any) => {
   return (
@@ -7,7 +8,7 @@ export const DetailsScreen = ({ navigation }: any) => {
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#FDDA0D",
+        backgroundColor: COLORS.background,
       }}
     >
       <Text>Details Screen</Text>

@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { Icon } from "@rneui/themed";
 import { useStoreGamePin } from "../store/MovieFilter";
+import { COLORS } from "../values/colors";
 
 export const SwipeScreen = () => {
   const [showInfoBool, setShowInfoBool] = useState<boolean>(false);
@@ -78,7 +79,7 @@ export const SwipeScreen = () => {
           flex: 4,
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#FDDA0D",
+          backgroundColor: COLORS.background,
         }}
       >
         <Text style={{ fontSize: 35 }}>GroupID: {gamePinToGroup}</Text>
@@ -119,17 +120,17 @@ export const SwipeScreen = () => {
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#FDDA0D",
+          backgroundColor: COLORS.background,
         }}
       >
         <TouchableOpacity style={styles.button} onPress={nextImage}>
-          <Icon name="close" color="#FDDA0D" />
+          <Icon name="close" color={COLORS.background} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={showInfo}>
-          <Icon name="info" color="#FDDA0D" />
+          <Icon name="info" color={COLORS.background} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={nextImage}>
-          <Icon name="check" color="#FDDA0D" />
+          <Icon name="check" color={COLORS.background} />
         </TouchableOpacity>
       </View>
     </>
@@ -155,8 +156,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 20,
     elevation: 3,
-    borderColor: "black",
-    backgroundColor: "black",
+    borderColor: COLORS.main,
+    backgroundColor: COLORS.main,
     borderRadius: 400,
     margin: 20,
   },

@@ -20,6 +20,7 @@ import { db, firebaseAuth } from "../firebaseConfig";
 import { signInAnonymously } from "firebase/auth";
 import { doc, updateDoc } from "firebase/firestore";
 import { useStoreGamePin } from "../store/MovieFilter";
+import { COLORS } from "../values/colors";
 
 export const HomeScreen = ({ navigation }: any) => {
   const [groupID, setGroupID] = useState<string>();
@@ -75,7 +76,7 @@ export const HomeScreen = ({ navigation }: any) => {
           flex: 1,
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#FDDA0D",
+          backgroundColor: COLORS.background,
         }}
       >
         <View>
@@ -128,7 +129,7 @@ export default HomeScreen;
 
 const styles = StyleSheet.create({
   inputField: {
-    borderColor: "black",
+    borderColor: COLORS.main,
     width: 200,
     height: 60,
     borderWidth: 1,
@@ -148,7 +149,7 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 20,
     marginBottom: 10,
-    color: "#FDDA0D",
+    color: COLORS.background,
   },
   button: {
     alignItems: "center",
@@ -156,8 +157,8 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 32,
     elevation: 3,
-    borderColor: "black",
-    backgroundColor: "black",
+    borderColor: COLORS.main,
+    backgroundColor: COLORS.main,
     borderRadius: 10,
     margin: 10,
   },

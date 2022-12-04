@@ -1,5 +1,6 @@
 import { View, Text } from "react-native";
 import { useStoreGamePin } from "../store/MovieFilter";
+import { COLORS } from "../values/colors"
 
 export const WaitingScreen = ({ navigation }: any) => {
   const gamePinToGroup = useStoreGamePin((state) => state.gamePin);
@@ -11,7 +12,7 @@ export const WaitingScreen = ({ navigation }: any) => {
           flex: 4,
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#FDDA0D",
+          backgroundColor: COLORS.background,
         }}
         //Dummy for å komme videre til Filmserver
         onTouchEnd={() => {
