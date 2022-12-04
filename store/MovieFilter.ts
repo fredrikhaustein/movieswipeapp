@@ -9,6 +9,16 @@ interface GenreState {
     setGenreList: (newItem: string[]) => void;
   }
 
+interface GamePin{
+    gamePin: string | null;
+    setGamePin: (newPin:string) => void;
+}
+
+export const useStoreGamePin = create<GamePin>((set:any, get:any) => ({
+    gamePin: null,
+    setGamePin: (gamePin: string) => set({gamePin}),
+}))
+
 export const useStoreMovieFilters = create<GenreState>((set:any, get:any) => ({
   streamingService: "None",
   genreList:[],
