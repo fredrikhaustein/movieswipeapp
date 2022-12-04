@@ -10,11 +10,13 @@ import {
   PanResponder,
 } from "react-native";
 import { Icon } from "@rneui/themed";
+import { useStoreGamePin } from "../store/MovieFilter";
 
 export const SwipeScreen = () => {
   const [showInfoBool, setShowInfoBool] = useState<boolean>(false);
   const [movieNumber, setMovieNumber] = useState<number>(0);
   const countRef = useRef(0);
+  const gamePinToGroup = useStoreGamePin((state) => state.gamePin);
 
   function nextImage() {
     if (countRef.current >= movies.length - 1) {
@@ -79,6 +81,7 @@ export const SwipeScreen = () => {
           backgroundColor: "#FDDA0D",
         }}
       >
+        <Text style={{ fontSize: 35 }}>GroupID: {gamePinToGroup}</Text>
         {!showInfoBool ? (
           <Animated.View
             style={{

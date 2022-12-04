@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Icon } from "@rneui/themed";
 import {
   View,
   Text,
@@ -18,11 +19,14 @@ import {
 import { db, firebaseAuth } from "../firebaseConfig";
 import { signInAnonymously } from "firebase/auth";
 import { doc, updateDoc } from "firebase/firestore";
+import { useStoreGamePin } from "../store/MovieFilter";
 
 export const HomeScreen = ({ navigation }: any) => {
   const [groupID, setGroupID] = useState<string>();
   const [errorWithGroupID, setErrorWithGroupID] = useState<boolean>(false);
   const [errorOnJoiningGroup, setErrorOnJoiningGroup] = useState<string>("");
+  const setGamePin = useStoreGamePin((state) => state.setGamePin);
+  const gamePinToGroup = useStoreGamePin((state) => state.gamePin);
 
   const handleSignIn = async () => {
     signInAnonymously(firebaseAuth)
@@ -56,6 +60,7 @@ export const HomeScreen = ({ navigation }: any) => {
       handleSignIn();
       handleAddUserToFireStore();
       navigation.navigate("Waiting");
+      setGamePin(groupID);
     } else {
       setErrorWithGroupID(true);
     }
@@ -89,7 +94,12 @@ export const HomeScreen = ({ navigation }: any) => {
             style={styles.inputField}
           />
           <View>
-            {errorWithGroupID && <Text>You have Written the wrong Code </Text>}
+            {errorWithGroupID && (
+              <Text>
+                {<Icon name="warning" color="black" />}You have Written the
+                wrong code {<Icon name="warning" color="black" />}
+              </Text>
+            )}
           </View>
         </View>
         <TouchableOpacity style={styles.button} onPress={handleOnJoinGroup}>

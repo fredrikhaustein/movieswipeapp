@@ -10,13 +10,15 @@ import {
 } from "firebase/firestore";
 import { db, firebaseAuth } from "../firebaseConfig";
 import { genreateGroupID } from "../utils/genreateGroupID";
-import { useStoreMovieFilters } from "../store/MovieFilter";
+import { useStoreGamePin, useStoreMovieFilters } from "../store/MovieFilter";
 import { signInAnonymously } from "firebase/auth";
 
 export const CreateGroup = ({ navigation }: any) => {
   const [pressedCreateNewGroup, setPressedCreateNewGroup] = useState(false);
   const [errorOnJoiningGroup, setErrorOnJoiningGroup] = useState<string>("");
   const [groupID, setGroupID] = useState<number>();
+
+  const setGamePin = useStoreGamePin((state) => state.setGamePin);
 
   const selectedGenreList = useStoreMovieFilters((state) => state.genreList);
   const selectedMovieService = useStoreMovieFilters(
@@ -67,6 +69,7 @@ export const CreateGroup = ({ navigation }: any) => {
         Users: [],
       });
       setPressedCreateNewGroup(true);
+      setGamePin(newgroupID.toString());
     }
     handleSignIn();
     console.log(selectedGenreList);
