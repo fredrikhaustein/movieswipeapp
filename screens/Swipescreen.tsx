@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   View,
   ScrollView,
@@ -9,25 +9,82 @@ import {
   Animated,
   PanResponder,
 } from "react-native";
+import axios from 'axios'
 import { Icon } from "@rneui/themed";
 import { useStoreGamePin } from "../store/MovieFilter";
 import { COLORS } from "../values/colors";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "../firebaseConfig";
 
 export const SwipeScreen = () => {
+  const gotDataRef = useRef(false);
   const [showInfoBool, setShowInfoBool] = useState<boolean>(false);
   const [movieNumber, setMovieNumber] = useState<number>(0);
   const countRef = useRef(0);
+  const pageRef = useRef(1); 
   const gamePinToGroup = useStoreGamePin((state) => state.gamePin);
+  const optionsAxios = {
+    method: 'GET',
+    url: 'https://streaming-availability.p.rapidapi.com/search/basic',
+    params: {
+      country: 'us',
+      service: 'netflix',
+      type: 'movie',
+      genre: '18',
+      page: '1',
+      output_language: 'en',
+      language: 'en'
+    },
+    headers: {
+      'X-RapidAPI-Key': 'edab4e7123msh8344a8f5fa69601p18c787jsnfaff8cc039db',
+      'X-RapidAPI-Host': 'streaming-availability.p.rapidapi.com'
+    }
+  };
+  const [moviesAPI, setMoviesAPI] = useState();
 
-  function nextImage() {
+  async function getMovies() {
+    console.log("run axios")
+    await axios.request(optionsAxios).then(function (response: any) {
+      setMoviesAPI(response.data.results)
+    }).catch(function (error: any) {
+      console.error(error);
+    });
+    countRef.current = 0;
+    setMovieNumber(countRef.current);
+  }
+
+  useEffect(() => {
+    if(! gotDataRef.current) {
+      getMovies();
+      gotDataRef.current = true
+    }
+  },[])
+
+  const nextImage = () => {
     if (countRef.current >= movies.length - 1) {
-      countRef.current = 0;
-      setMovieNumber(countRef.current);
+      pageRef.current = pageRef.current + 1; 
+      optionsAxios.params.page = '' + pageRef.current;
+      getMovies();
     } else {
       countRef.current = countRef.current + 1;
       setMovieNumber(countRef.current);
     }
   }
+
+  const likeMovie = async () => {
+    const number = countRef.current;
+    const fireBaseDoc = await getDoc(doc(db, "Groups", `${gamePinToGroup}`))
+    const likesRest = fireBaseDoc.get("Movies")
+    const mov = []
+    likesRest.map((d: any) => mov.push(d))
+    mov.push(moviesAPI[number]["imdbID"])
+    await updateDoc(doc(db, "Groups", `${gamePinToGroup}`), {
+        Movies: mov
+      })
+    nextImage(); 
+  }
+  
+
 
   const showInfo = () => {
     setShowInfoBool(!showInfoBool);
@@ -65,7 +122,10 @@ export const SwipeScreen = () => {
       onPanResponderEnd: (e, gestureState) => {
         pan.flattenOffset();
         resetPos();
-        if (Math.abs(gestureState.dx) > 120) {
+        if (gestureState.dx > 120) {
+          likeMovie();
+        }
+        if (gestureState.dx <  -120) {
           nextImage();
         }
       },
@@ -83,33 +143,44 @@ export const SwipeScreen = () => {
         }}
       >
         <Text style={{ fontSize: 35 }}>GroupID: {gamePinToGroup}</Text>
-        {!showInfoBool ? (
-          <Animated.View
+        {(!showInfoBool) || (moviesAPI === undefined)  ? (
+          /*<Animated.View
             style={{
               transform: [{ translateX: pan.x }, { translateY: pan.y }],
             }}
             {...panResponder.panHandlers}
-          >
-            <Image
-              source={{ uri: movies[movieNumber]["posterURLs"]["original"] }}
+          >*/
+          <View>
+
+            {moviesAPI == null ? (
+              <Text
+              style={styles.textField}
+              >
+              Loading
+              </Text>
+            ) : (
+              <Image
+              source={{ uri: moviesAPI[movieNumber]["posterURLs"]["original"] }}
               style={{ width: 320, height: 500 }}
-            />
-          </Animated.View>
+              />
+              )}
+          </View>
+          /*</Animated.View>*/
         ) : (
           <ScrollView>
             <Text style={styles.textFieldTop}>
-              {movies[movieNumber]["originalTitle"]}
+              {moviesAPI[movieNumber]["originalTitle"]}
             </Text>
             <Text style={styles.textField}>
               IMBD rating: {movies[movieNumber]["imdbRating"]}
             </Text>
-            {movies[movieNumber]["cast"].slice(0, 3).map((cast) => (
+            {moviesAPI[movieNumber]["cast"].slice(0, 3).map((cast) => (
               <Text style={styles.textField} key={cast}>
                 {cast}
               </Text>
             ))}
             <Text style={styles.textField}>
-              {movies[movieNumber]["overview"]}
+              {moviesAPI[movieNumber]["overview"]}
             </Text>
           </ScrollView>
         )}
@@ -129,7 +200,7 @@ export const SwipeScreen = () => {
         <TouchableOpacity style={styles.button} onPress={showInfo}>
           <Icon name="info" color={COLORS.background} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={nextImage}>
+        <TouchableOpacity style={styles.button} onPress={likeMovie}>
           <Icon name="check" color={COLORS.background} />
         </TouchableOpacity>
       </View>
