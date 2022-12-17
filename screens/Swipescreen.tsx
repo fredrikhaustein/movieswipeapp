@@ -61,7 +61,7 @@ export const SwipeScreen = () => {
   },[])
 
   const nextImage = () => {
-    if (countRef.current >= movies.length - 1) {
+    if (countRef.current >= moviesAPI.length - 1) {
       pageRef.current = pageRef.current + 1; 
       optionsAxios.params.page = '' + pageRef.current;
       getMovies();
@@ -83,9 +83,6 @@ export const SwipeScreen = () => {
       })
     nextImage(); 
   }
-  
-
-
   const showInfo = () => {
     setShowInfoBool(!showInfoBool);
   };
@@ -172,7 +169,7 @@ export const SwipeScreen = () => {
               {moviesAPI[movieNumber]["originalTitle"]}
             </Text>
             <Text style={styles.textField}>
-              IMBD rating: {movies[movieNumber]["imdbRating"]}
+              IMBD rating: {moviesAPI[movieNumber]["imdbRating"]}
             </Text>
             {moviesAPI[movieNumber]["cast"].slice(0, 3).map((cast) => (
               <Text style={styles.textField} key={cast}>
