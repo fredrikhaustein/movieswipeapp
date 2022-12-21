@@ -9,6 +9,7 @@ import CreateNewGroup from "./screens/ChooseMovieService";
 import ChooseGenre from "./screens/ChooseGenre";
 import CreateGroup from "./screens/CreateGroup";
 import WaitingScreen from "./screens/WaitingScreen";
+import HighscoreList from "./screens/Highscore";
 import { COLORS } from "./values/colors";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 
@@ -61,6 +62,18 @@ export default function App() {
         <Stack.Screen
           name="CreateGroup"
           component={CreateGroup}
+          options={{
+            headerShown: true,
+            title: "",
+            headerTintColor: COLORS.main,
+            headerStyle: {
+              backgroundColor: COLORS.background,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Highscore"
+          component={HighscoreList}
           options={{
             headerShown: true,
             title: "",
