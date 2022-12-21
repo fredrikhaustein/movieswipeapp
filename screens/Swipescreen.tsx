@@ -16,7 +16,7 @@ import { COLORS } from "../values/colors";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
-export const SwipeScreen = () => {
+export const SwipeScreen = ({ navigation }: any) => {
   const gotDataRef = useRef(false);
   const [showInfoBool, setShowInfoBool] = useState<boolean>(false);
   const [movieNumber, setMovieNumber] = useState<number>(0);
@@ -41,7 +41,7 @@ export const SwipeScreen = () => {
     }
   };
   const [moviesAPI, setMoviesAPI] = useState();
-
+  
   async function getMovies() {
     console.log("run axios")
     await axios.request(optionsAxios).then(function (response: any) {
@@ -59,6 +59,10 @@ export const SwipeScreen = () => {
       gotDataRef.current = true
     }
   },[])
+  
+  const showHighscore = () => {
+    navigation.navigate("Highscore")
+  }
 
   const nextImage = () => {
     if (countRef.current >= moviesAPI.length - 1) {
@@ -74,12 +78,12 @@ export const SwipeScreen = () => {
   const likeMovie = async () => {
     const number = countRef.current;
     const fireBaseDoc = await getDoc(doc(db, "Groups", `${gamePinToGroup}`))
-    const likesRest = fireBaseDoc.get("Movies")
+    const likesRest = fireBaseDoc.get("Likes")
     const mov = []
     likesRest.map((d: any) => mov.push(d))
     mov.push(moviesAPI[number]["imdbID"])
     await updateDoc(doc(db, "Groups", `${gamePinToGroup}`), {
-        Movies: mov
+        Likes: mov
       })
     nextImage(); 
   }
@@ -140,6 +144,7 @@ export const SwipeScreen = () => {
         }}
       >
         <Text style={{ fontSize: 35 }}>GroupID: {gamePinToGroup}</Text>
+        <TouchableOpacity style={styles.button} onPress={showHighscore}/>
         {(!showInfoBool) || (moviesAPI === undefined)  ? (
           /*<Animated.View
             style={{

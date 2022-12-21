@@ -73,6 +73,7 @@ export const CreateGroup = ({ navigation }: any) => {
         MovieLikes: [], 
         Page: 1,
         Movies: [],
+        Likes: [],
       });
       setPressedCreateNewGroup(true);
       setGamePin(newgroupID.toString());
