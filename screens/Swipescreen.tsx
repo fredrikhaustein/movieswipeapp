@@ -16,7 +16,7 @@ import { COLORS } from "../values/colors";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
-export const SwipeScreen = () => {
+export const SwipeScreen = ({ navigation }: any) => {
   const gotDataRef = useRef(false);
   const [showInfoBool, setShowInfoBool] = useState<boolean>(false);
   const [movieNumber, setMovieNumber] = useState<number>(0);
@@ -60,6 +60,10 @@ export const SwipeScreen = () => {
     }
   },[])
 
+  const showHighScore = () => {
+    navigation.navigate("Highscore", {type: "anonymous"});
+  }
+
   const nextImage = () => {
     if (countRef.current >= moviesAPI.length - 1) {
       pageRef.current = pageRef.current + 1; 
@@ -71,16 +75,27 @@ export const SwipeScreen = () => {
     }
   }
 
-  const likeMovie = async () => {
+  const likeMovie = async (like: boolean) => {
+    console.log(like)
     const number = countRef.current;
     const fireBaseDoc = await getDoc(doc(db, "Groups", `${gamePinToGroup}`))
-    const likesRest = fireBaseDoc.get("Movies")
     const mov = []
-    likesRest.map((d: any) => mov.push(d))
-    mov.push(moviesAPI[number]["imdbID"])
-    await updateDoc(doc(db, "Groups", `${gamePinToGroup}`), {
-        Movies: mov
+    if(like) {
+      const likesRest = fireBaseDoc.get("Likes")
+      likesRest.map((d: any) => mov.push(d))
+      mov.push(moviesAPI[number]["imdbID"])
+      await updateDoc(doc(db, "Groups", `${gamePinToGroup}`), {
+        Likes: mov
       })
+    }
+    else {
+      const dislikesRest = fireBaseDoc.get("Dislikes")
+      dislikesRest.map((d: any) => mov.push(d))
+      mov.push(moviesAPI[number]["imdbID"])
+      await updateDoc(doc(db, "Groups", `${gamePinToGroup}`), {
+        Dislikes: mov
+      })
+    }
     nextImage(); 
   }
   const showInfo = () => {
@@ -140,6 +155,7 @@ export const SwipeScreen = () => {
         }}
       >
         <Text style={{ fontSize: 35 }}>GroupID: {gamePinToGroup}</Text>
+        <TouchableOpacity style={styles.button} onPress={showHighScore}/>
         {(!showInfoBool) || (moviesAPI === undefined)  ? (
           /*<Animated.View
             style={{
@@ -191,13 +207,13 @@ export const SwipeScreen = () => {
           backgroundColor: COLORS.background,
         }}
       >
-        <TouchableOpacity style={styles.button} onPress={nextImage}>
+        <TouchableOpacity style={styles.button} onPress={() => likeMovie(false)}>
           <Icon name="close" color={COLORS.background} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={showInfo}>
           <Icon name="info" color={COLORS.background} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={likeMovie}>
+        <TouchableOpacity style={styles.button} onPress={() => likeMovie(true)}>
           <Icon name="check" color={COLORS.background} />
         </TouchableOpacity>
       </View>

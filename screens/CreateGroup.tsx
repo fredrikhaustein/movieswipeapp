@@ -70,9 +70,9 @@ export const CreateGroup = ({ navigation }: any) => {
       MovieServiec: `${selectedMovieService}`,
         GenreList: selectedGenreList,
         Users: [],
-        MovieLikes: [], 
+        Likes: [],
+        Dislikes: [], 
         Page: 1,
-        Movies: [],
       });
       setPressedCreateNewGroup(true);
       setGamePin(newgroupID.toString());
