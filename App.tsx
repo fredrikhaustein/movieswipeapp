@@ -10,6 +10,7 @@ import ChooseGenre from "./screens/ChooseGenre";
 import CreateGroup from "./screens/CreateGroup";
 import WaitingScreen from "./screens/WaitingScreen";
 import { COLORS } from "./values/colors";
+import { Colors } from "react-native/Libraries/NewAppScreen";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -22,7 +23,16 @@ export default function App() {
           options={{ headerShown: false }}
         />
         <Stack.Screen name="Details" component={DetailScreen} />
-        <Stack.Screen name="SwipeScreen" component={SwipeScreen} />
+        <Stack.Screen name="SwipeScreen" component={SwipeScreen}
+        options={{
+          headerShown: true,
+          title: "Choose Moovie",
+          headerTintColor: COLORS.main,
+          headerStyle: {
+            backgroundColor: COLORS.background,
+          },
+        }}
+        />
         <Stack.Screen name="Waiting" component={WaitingScreen}/>
         <Stack.Screen
           name="CreateNewGroupScreen"
