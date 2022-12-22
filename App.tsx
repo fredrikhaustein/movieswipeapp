@@ -8,8 +8,7 @@ import SwipeScreen from "./screens/Swipescreen";
 import CreateNewGroup from "./screens/ChooseMovieService";
 import ChooseGenre from "./screens/ChooseGenre";
 import CreateGroup from "./screens/CreateGroup";
-import WaitingScreen from "./screens/WaitingScreen";
-import HighscoreList from "./screens/Highscore";
+import { Highscore } from "./screens/Highscore";
 import { COLORS } from "./values/colors";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 
@@ -33,19 +32,6 @@ export default function App() {
             backgroundColor: COLORS.background,
           },
         }}
-        />
-        <Stack.Screen name="Waiting" component={WaitingScreen}/>
-        <Stack.Screen
-          name="CreateNewGroupScreen"
-          component={CreateNewGroup}
-          options={{
-            headerShown: true,
-            title: "Choose Movie Services",
-            headerTintColor: COLORS.main,
-            headerStyle: {
-              backgroundColor: COLORS.background,
-            },
-          }}
         />
         <Stack.Screen
           name="ChooseGenre"
@@ -73,7 +59,7 @@ export default function App() {
         />
         <Stack.Screen
           name="Highscore"
-          component={HighscoreList}
+          component={Highscore}
           options={{
             headerShown: true,
             title: "",
