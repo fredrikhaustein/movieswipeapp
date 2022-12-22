@@ -45,8 +45,6 @@ export const Highscore = ({ navigation }: any) => {
 
   async function getMoviePosters(toplist: string[]) {
     const posters: string[] = [];
-    console.log("Axios");
-    console.log("Toplist", toplist);
     toplist.forEach(async (val) => {
       const posterUrl = "https://moviesdatabase.p.rapidapi.com/titles/" + val;
       options.url = posterUrl;
@@ -71,7 +69,7 @@ export const Highscore = ({ navigation }: any) => {
       sorted.push(key);
     }
     console.log("sorted", sorted);
-    return sorted;
+    return sorted.slice(0, 10);
   }
 
   async function getLikesFromDb(): Promise<string[]> {
@@ -101,7 +99,7 @@ export const Highscore = ({ navigation }: any) => {
         backgroundColor: COLORS.background,
       }}
     >
-      <Text>Top Picks for group {gamePinToGroup}</Text>
+      <Text style={styles.textFieldStyle}>Top Picks for group {gamePinToGroup}</Text>
       {posterURL != undefined && !isLoading ? (
         <FlatList
           data={posterURL}

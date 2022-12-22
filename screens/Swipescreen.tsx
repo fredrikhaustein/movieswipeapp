@@ -19,7 +19,7 @@ import InfoAboutFilmView from "../components/ScreenInScreen/InfoAboutFilmView";
 
 export const SwipeScreen = ({ navigation }: any) => {
   const nrOfMovies = 2;
-  const [lengthDisLikeAndLike, setLengthDisLikeAndLike] = useState<number>();
+  const [lengthDisLikeAndLike, setLengthDisLikeAndLike] = useState<number>(0);
   const gotDataRef = useRef(false);
   const [showInfoBool, setShowInfoBool] = useState<boolean>(false);
   const [movieNumber, setMovieNumber] = useState<number>(0);
@@ -68,13 +68,19 @@ export const SwipeScreen = ({ navigation }: any) => {
         const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
         const collectedData = doc.data();
         if (collectedData) {
-          // console.log(source, " Data: ", collectedData);
-          // console.log(source, " DisMovies: ", collectedData["Dislikes"]);
-          // console.log(source, " LikMovies: ", collectedData["Likes"]);
-          const totLenSwipedMovies =
-            collectedData["Dislikes"].length + collectedData["Likes"].length;
-          // console.log(totLenSwipedMovies);
-          setLengthDisLikeAndLike(totLenSwipedMovies);
+          if (collectedData["Dislikes"] === undefined || collectedData["Dislikes"].length == 0) {
+            setLengthDisLikeAndLike(collectedData["Likes"].length)
+          }
+
+          else if (collectedData["Likes"] === undefined || collectedData["Likes"].length == 0) {
+            setLengthDisLikeAndLike(collectedData["Likes"].length)
+          }
+          else {
+            const totLenSwipedMovies = 
+            collectedData["Dislikes"].length +
+            collectedData["Likes"].length
+            setLengthDisLikeAndLike(totLenSwipedMovies)
+          }
         }
       }
     );
@@ -91,7 +97,7 @@ export const SwipeScreen = ({ navigation }: any) => {
   }, []);
 
   useEffect(() => {
-    if (lengthDisLikeAndLike == 14) {
+    if (lengthDisLikeAndLike >= 14) {
       showHighScore();
     }
   }, [lengthDisLikeAndLike]);
@@ -158,19 +164,21 @@ export const SwipeScreen = ({ navigation }: any) => {
           backgroundColor: COLORS.background,
         }}
       >
-        <TouchableOpacity style={styles.button} onPress={showHighScore} />
         {!showInfoBool || moviesAPI === undefined ? (
           <View>
-            <Text style={{ fontSize: 35 }}>GroupID: {gamePinToGroup}</Text>
             {moviesAPI == null ? (
-              <Text style={styles.textField}>Loading</Text>
+              <View>
+                <Text>Loading</Text>
+              </View>
             ) : (
-              <Image
+              <View>
+                <Image
                 source={{
                   uri: moviesAPI[movieNumber]["posterURLs"]["original"],
                 }}
                 style={{ width: 320, height: 500 }}
-              />
+                />
+              </View>
             )}
           </View>
         ) : (

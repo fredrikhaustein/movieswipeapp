@@ -60,7 +60,7 @@ export const HomeScreen = ({ navigation }: any) => {
     if (groupID && allGroupIds.includes(groupID)) {
       handleSignIn();
       handleAddUserToFireStore();
-      navigation.navigate("Waiting");
+      navigation.navigate("SwipeScreen");
       setGamePin(groupID);
     } else {
       setErrorWithGroupID(true);
