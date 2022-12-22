@@ -9,12 +9,19 @@ import CreateNewGroup from "./screens/ChooseMovieService";
 import ChooseGenre from "./screens/ChooseGenre";
 import CreateGroup from "./screens/CreateGroup";
 import WaitingScreen from "./screens/WaitingScreen";
-import HighscoreList from "./screens/Highscore";
+import { Highscore } from "./screens/Highscore";
 import { COLORS } from "./values/colors";
 import { Colors } from "react-native/Libraries/NewAppScreen";
+import { LogBox } from "react-native";
 
 export default function App() {
+  //Warning not to show in app, not important warning
+  LogBox.ignoreLogs([
+    "Warning: Async Storage has been extracted from react-native core",
+  ]);
+
   const Stack = createNativeStackNavigator();
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
@@ -24,17 +31,19 @@ export default function App() {
           options={{ headerShown: false }}
         />
         <Stack.Screen name="Details" component={DetailScreen} />
-        <Stack.Screen name="SwipeScreen" component={SwipeScreen}
-        options={{
-          headerShown: true,
-          title: "Choose Moovie",
-          headerTintColor: COLORS.main,
-          headerStyle: {
-            backgroundColor: COLORS.background,
-          },
-        }}
+        <Stack.Screen
+          name="SwipeScreen"
+          component={SwipeScreen}
+          options={{
+            headerShown: true,
+            title: "Choose Moovie",
+            headerTintColor: COLORS.main,
+            headerStyle: {
+              backgroundColor: COLORS.background,
+            },
+          }}
         />
-        <Stack.Screen name="Waiting" component={WaitingScreen}/>
+        <Stack.Screen name="Waiting" component={WaitingScreen} />
         <Stack.Screen
           name="CreateNewGroupScreen"
           component={CreateNewGroup}
@@ -73,7 +82,7 @@ export default function App() {
         />
         <Stack.Screen
           name="Highscore"
-          component={HighscoreList}
+          component={Highscore}
           options={{
             headerShown: true,
             title: "",
@@ -87,11 +96,3 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

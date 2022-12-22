@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import {
   View,
   ScrollView,
@@ -9,140 +9,144 @@ import {
   Animated,
   PanResponder,
 } from "react-native";
-import axios from 'axios'
+import axios from "axios";
 import { Icon } from "@rneui/themed";
 import { useStoreGamePin } from "../store/MovieFilter";
 import { COLORS } from "../values/colors";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
+import InfoAboutFilmView from "../components/ScreenInScreen/InfoAboutFilmView";
 
 export const SwipeScreen = ({ navigation }: any) => {
+  const nrOfMovies = 2;
+  const [lengthDisLikeAndLike, setLengthDisLikeAndLike] = useState<number>();
   const gotDataRef = useRef(false);
   const [showInfoBool, setShowInfoBool] = useState<boolean>(false);
   const [movieNumber, setMovieNumber] = useState<number>(0);
   const countRef = useRef(0);
-  const pageRef = useRef(1); 
+  const pageRef = useRef(1);
   const gamePinToGroup = useStoreGamePin((state) => state.gamePin);
   const optionsAxios = {
-    method: 'GET',
-    url: 'https://streaming-availability.p.rapidapi.com/search/basic',
+    method: "GET",
+    url: "https://streaming-availability.p.rapidapi.com/search/basic",
     params: {
-      country: 'us',
-      service: 'netflix',
-      type: 'movie',
-      genre: '18',
-      page: '1',
-      output_language: 'en',
-      language: 'en'
+      country: "us",
+      service: "netflix",
+      type: "movie",
+      genre: "18",
+      page: "1",
+      output_language: "en",
+      language: "en",
     },
     headers: {
-      'X-RapidAPI-Key': 'edab4e7123msh8344a8f5fa69601p18c787jsnfaff8cc039db',
-      'X-RapidAPI-Host': 'streaming-availability.p.rapidapi.com'
-    }
+      "X-RapidAPI-Key": "edab4e7123msh8344a8f5fa69601p18c787jsnfaff8cc039db",
+      "X-RapidAPI-Host": "streaming-availability.p.rapidapi.com",
+    },
   };
-  const [moviesAPI, setMoviesAPI] = useState();
+  const [moviesAPI, setMoviesAPI] = useState<any>();
 
   async function getMovies() {
-    console.log("run axios")
-    await axios.request(optionsAxios).then(function (response: any) {
-      setMoviesAPI(response.data.results)
-    }).catch(function (error: any) {
-      console.error(error);
-    });
+    console.log("run axios");
+    await axios
+      .request(optionsAxios)
+      .then(function (response: any) {
+        // console.log(response.data.results);
+        setMoviesAPI(response.data.results);
+      })
+      .catch(function (error: any) {
+        console.error(error);
+      });
     countRef.current = 0;
     setMovieNumber(countRef.current);
+    // console.log(moviesAPI[movieNumber]["cast"]);
   }
+
+  const handleUnSubscribe = () => {
+    const unsubscribe = onSnapshot(
+      doc(db, "Groups", `${gamePinToGroup}`),
+      (doc) => {
+        const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
+        const collectedData = doc.data();
+        if (collectedData) {
+          // console.log(source, " Data: ", collectedData);
+          // console.log(source, " DisMovies: ", collectedData["Dislikes"]);
+          // console.log(source, " LikMovies: ", collectedData["Likes"]);
+          const totLenSwipedMovies =
+            collectedData["Dislikes"].length + collectedData["Likes"].length;
+          // console.log(totLenSwipedMovies);
+          setLengthDisLikeAndLike(totLenSwipedMovies);
+        }
+      }
+    );
+    return () => {
+      unsubscribe();
+    };
+  };
 
   useEffect(() => {
-    if(! gotDataRef.current) {
+    if (!gotDataRef.current) {
       getMovies();
-      gotDataRef.current = true
+      gotDataRef.current = true;
     }
-  },[])
+  }, []);
+
+  useEffect(() => {
+    if (lengthDisLikeAndLike == 14) {
+      showHighScore();
+    }
+  }, [lengthDisLikeAndLike]);
 
   const showHighScore = () => {
-    navigation.navigate("Highscore", {type: "anonymous"});
-  }
+    navigation.navigate("Highscore", { type: "anonymous" });
+  };
 
   const nextImage = () => {
-    if (countRef.current >= moviesAPI.length - 1) {
-      pageRef.current = pageRef.current + 1; 
-      optionsAxios.params.page = '' + pageRef.current;
-      getMovies();
-    } else {
-      countRef.current = countRef.current + 1;
-      setMovieNumber(countRef.current);
+    if (moviesAPI) {
+      if (countRef.current >= moviesAPI.length - 1) {
+        pageRef.current = pageRef.current + 1;
+        optionsAxios.params.page = "" + pageRef.current;
+        getMovies();
+        console.log("Cast", moviesAPI[movieNumber]["cast"]);
+      } else {
+        countRef.current = countRef.current + 1;
+        setMovieNumber(countRef.current);
+      }
     }
-  }
+  };
 
   const likeMovie = async (like: boolean) => {
-    console.log(like)
+    console.log(like);
     const number = countRef.current;
-    const fireBaseDoc = await getDoc(doc(db, "Groups", `${gamePinToGroup}`))
-    const mov = []
-    if(like) {
-      const likesRest = fireBaseDoc.get("Likes")
-      likesRest.map((d: any) => mov.push(d))
-      mov.push(moviesAPI[number]["imdbID"])
+    const fireBaseDoc = await getDoc(doc(db, "Groups", `${gamePinToGroup}`));
+    const mov = [];
+    if (like) {
+      const likesRest = fireBaseDoc.get("Likes");
+      console.log(likesRest);
+      likesRest.map((d: any) => mov.push(d));
+      if (moviesAPI) {
+        mov.push(moviesAPI[number]["imdbID"]);
+      }
       await updateDoc(doc(db, "Groups", `${gamePinToGroup}`), {
-        Likes: mov
-      })
+        Likes: mov,
+      });
+    } else {
+      const dislikesRest = fireBaseDoc.get("Dislikes");
+      if (dislikesRest) {
+        dislikesRest.map((d: any) => mov.push(d));
+        if (moviesAPI) {
+          mov.push(moviesAPI[number]["imdbID"]);
+        }
+        await updateDoc(doc(db, "Groups", `${gamePinToGroup}`), {
+          Dislikes: mov,
+        });
+      }
     }
-    else {
-      const dislikesRest = fireBaseDoc.get("Dislikes")
-      dislikesRest.map((d: any) => mov.push(d))
-      mov.push(moviesAPI[number]["imdbID"])
-      await updateDoc(doc(db, "Groups", `${gamePinToGroup}`), {
-        Dislikes: mov
-      })
-    }
-    nextImage(); 
-  }
+    nextImage();
+    handleUnSubscribe();
+  };
   const showInfo = () => {
     setShowInfoBool(!showInfoBool);
   };
-
-  const pan = useRef(new Animated.ValueXY()).current;
-  function resetPos() {
-    Animated.timing(pan, {
-      toValue: { x: 0, y: 0 },
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
-  }
-  const panResponder = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: (event, gestureState) => {
-        const { dx, dy } = gestureState;
-        // return true if user is swiping, return false if it's a single click
-        return Math.abs(dx) !== 0 && Math.abs(dy) !== 0;
-      },
-      onMoveShouldSetPanResponderCapture: (event, gestureState) => {
-        const { dx, dy } = gestureState;
-        // return true if user is swiping, return false if it's a single click
-        return Math.abs(dx) !== 0 && Math.abs(dy) !== 0;
-      },
-      onPanResponderTerminationRequest: () => false,
-      onPanResponderGrant: () => {
-        pan.setValue({ x: 0, y: 0 });
-      },
-      onPanResponderMove: (event, gesture) => {
-        const x = gesture.dx;
-        const y = gesture.dy;
-        pan.setValue({ x, y });
-      },
-      onPanResponderEnd: (e, gestureState) => {
-        pan.flattenOffset();
-        resetPos();
-        if (gestureState.dx > 120) {
-          likeMovie();
-        }
-        if (gestureState.dx <  -120) {
-          nextImage();
-        }
-      },
-    })
-  ).current;
 
   return (
     <>
@@ -154,48 +158,28 @@ export const SwipeScreen = ({ navigation }: any) => {
           backgroundColor: COLORS.background,
         }}
       >
-        <Text style={{ fontSize: 35 }}>GroupID: {gamePinToGroup}</Text>
-        <TouchableOpacity style={styles.button} onPress={showHighScore}/>
-        {(!showInfoBool) || (moviesAPI === undefined)  ? (
-          /*<Animated.View
-            style={{
-              transform: [{ translateX: pan.x }, { translateY: pan.y }],
-            }}
-            {...panResponder.panHandlers}
-          >*/
+        <TouchableOpacity style={styles.button} onPress={showHighScore} />
+        {!showInfoBool || moviesAPI === undefined ? (
           <View>
-
+            <Text style={{ fontSize: 35 }}>GroupID: {gamePinToGroup}</Text>
             {moviesAPI == null ? (
-              <Text
-              style={styles.textField}
-              >
-              Loading
-              </Text>
+              <Text style={styles.textField}>Loading</Text>
             ) : (
               <Image
-              source={{ uri: moviesAPI[movieNumber]["posterURLs"]["original"] }}
-              style={{ width: 320, height: 500 }}
+                source={{
+                  uri: moviesAPI[movieNumber]["posterURLs"]["original"],
+                }}
+                style={{ width: 320, height: 500 }}
               />
-              )}
+            )}
           </View>
-          /*</Animated.View>*/
         ) : (
-          <ScrollView>
-            <Text style={styles.textFieldTop}>
-              {moviesAPI[movieNumber]["originalTitle"]}
-            </Text>
-            <Text style={styles.textField}>
-              IMBD rating: {moviesAPI[movieNumber]["imdbRating"]}
-            </Text>
-            {moviesAPI[movieNumber]["cast"].slice(0, 3).map((cast) => (
-              <Text style={styles.textField} key={cast}>
-                {cast}
-              </Text>
-            ))}
-            <Text style={styles.textField}>
-              {moviesAPI[movieNumber]["overview"]}
-            </Text>
-          </ScrollView>
+          <InfoAboutFilmView
+            title={moviesAPI[movieNumber]["originalTitle"]}
+            imdbRating={moviesAPI[movieNumber]["imdbRating"]}
+            cast={moviesAPI[movieNumber]["cast"]}
+            overview={moviesAPI[movieNumber]["overview"]}
+          />
         )}
       </View>
       <View
@@ -207,7 +191,10 @@ export const SwipeScreen = ({ navigation }: any) => {
           backgroundColor: COLORS.background,
         }}
       >
-        <TouchableOpacity style={styles.button} onPress={() => likeMovie(false)}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => likeMovie(false)}
+        >
           <Icon name="close" color={COLORS.background} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={showInfo}>
@@ -246,3 +233,69 @@ const styles = StyleSheet.create({
     margin: 20,
   },
 });
+/*<Animated.View
+style={{
+  transform: [{ translateX: pan.x }, { translateY: pan.y }],
+}}
+{...panResponder.panHandlers}
+>*/
+
+// const pan = useRef(new Animated.ValueXY()).current;
+// function resetPos() {
+//   Animated.timing(pan, {
+//     toValue: { x: 0, y: 0 },
+//     duration: 200,
+//     useNativeDriver: true,
+//   }).start();
+// }
+// const panResponder = useRef(
+//   PanResponder.create({
+//     onMoveShouldSetPanResponder: (event, gestureState) => {
+//       const { dx, dy } = gestureState;
+//       // return true if user is swiping, return false if it's a single click
+//       return Math.abs(dx) !== 0 && Math.abs(dy) !== 0;
+//     },
+//     onMoveShouldSetPanResponderCapture: (event, gestureState) => {
+//       const { dx, dy } = gestureState;
+//       // return true if user is swiping, return false if it's a single click
+//       return Math.abs(dx) !== 0 && Math.abs(dy) !== 0;
+//     },
+//     onPanResponderTerminationRequest: () => false,
+//     onPanResponderGrant: () => {
+//       pan.setValue({ x: 0, y: 0 });
+//     },
+//     onPanResponderMove: (event, gesture) => {
+//       const x = gesture.dx;
+//       const y = gesture.dy;
+//       pan.setValue({ x, y });
+//     },
+//     onPanResponderEnd: (e, gestureState) => {
+//       pan.flattenOffset();
+//       resetPos();
+//       if (gestureState.dx > 120) {
+//         likeMovie();
+//       }
+//       if (gestureState.dx < -120) {
+//         nextImage();
+//       }
+//     },
+//   })
+// ).current;
+
+/*</Animated.View>*/
+// <ScrollView>
+//   <Text style={styles.textFieldTop}>
+//     {moviesAPI[movieNumber]["originalTitle"]}
+//   </Text>
+//   <Text style={styles.textField}>
+//     IMBD rating: {moviesAPI[movieNumber]["imdbRating"]}
+//   </Text>
+//   {moviesAPI[movieNumber]["cast"].slice(0, 3).map((cast: any) => (
+//     <Text style={styles.textField} key={cast}>
+//       {cast}
+//     </Text>
+//   ))}
+//   <Text style={styles.textField}>
+//     {moviesAPI[movieNumber]["overview"]}
+//   </Text>
+// </ScrollView>
