@@ -46,6 +46,18 @@ export default function App() {
           }}
         />
         <Stack.Screen
+          name="CreateNewGroupScreen"
+          component={CreateNewGroup}
+          options={{
+            headerShown: true,
+            title: "Choose Genre",
+            headerTintColor: COLORS.main,
+            headerStyle: {
+              backgroundColor: COLORS.background,
+            },
+          }}
+        />
+        <Stack.Screen
           name="CreateGroup"
           component={CreateGroup}
           options={{

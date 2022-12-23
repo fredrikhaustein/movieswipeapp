@@ -1,6 +1,6 @@
 import { CheckBox } from "@rneui/base";
 import React, { useState } from "react";
-import { Button, View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { Button, View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import { useStoreMovieFilters } from "../store/MovieFilter";
 import { genreList, genreListSingular } from "../utils/genreSelectionList";
 import { COLORS } from "../values/colors";
@@ -20,7 +20,7 @@ export const ChooseGenre = ({ navigation }: any) => {
     const newListGenre: string[] = [];
     updatedCheckedState.map((item, index) => {
       if (item) {
-        newListGenre.push(genreListSingular[index]);
+        newListGenre.push(genreList[index].apiKey);
       }
     });
     console.log(newListGenre);
@@ -37,22 +37,25 @@ export const ChooseGenre = ({ navigation }: any) => {
       }}
     >
       <Text style={{ fontSize: 25 }}>Choose Genre</Text>
+      <ScrollView>
 
       {genreList.map(({ id, service }, index) => {
         return (
+          
           <CheckBox
-            center
-            key={`${id}`}
-            title={`${service}`}
-            checked={checkedState[index]}
-            onPress={() => handleOnChange(index)}
-            containerStyle={styles.checkboxStyle}
-            textStyle={styles.checkboxTextStyle}
-            wrapperStyle={styles.checkboxWrapper}
+          center
+          key={`${id}`}
+          title={`${service}`}
+          checked={checkedState[index]}
+          onPress={() => handleOnChange(index)}
+          containerStyle={styles.checkboxStyle}
+          textStyle={styles.checkboxTextStyle}
+          wrapperStyle={styles.checkboxWrapper}
           />
-        );
-      })}
+          );
+        })}
 
+      </ScrollView>
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("CreateGroup")}

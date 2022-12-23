@@ -1,4 +1,4 @@
-import { Button, View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Button, View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import { CheckBox } from "@rneui/themed";
 import React, { useState } from "react";
 import { useStoreMovieFilters } from "../store/MovieFilter";
@@ -22,7 +22,7 @@ export const ChooseMovieService = ({ navigation }: any) => {
       index === position ? true : false
     );
     setCheckedState(updatedCheckedState);
-    setStreamingService(streamingServiceList[position].service);
+    setStreamingService(streamingServiceList[position].apiKey);
   };
 
   console.log(streamingService);
@@ -48,7 +48,7 @@ export const ChooseMovieService = ({ navigation }: any) => {
             containerStyle={styles.checkboxStyle}
             textStyle={styles.checkboxTextStyle}
             wrapperStyle={styles.checkboxWrapper}
-          />
+            />
         );
       })}
 
