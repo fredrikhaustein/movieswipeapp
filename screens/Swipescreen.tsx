@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Animated,
   PanResponder,
+  ActivityIndicator
 } from "react-native";
 import axios from "axios";
 import { Icon } from "@rneui/themed";
@@ -176,7 +177,7 @@ export const SwipeScreen = ({ navigation }: any) => {
           <View>
             {moviesAPI == null ? (
               <View>
-                <Text>Loading</Text>
+                <ActivityIndicator size="large"/>
               </View>
             ) : (
               <View>
