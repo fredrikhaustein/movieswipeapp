@@ -72,7 +72,6 @@ export const CreateGroup = ({ navigation }: any) => {
         Users: [],
         Likes: [],
         Dislikes: [], 
-        Page: 1,
       });
       setPressedCreateNewGroup(true);
       setGamePin(newgroupID.toString());
