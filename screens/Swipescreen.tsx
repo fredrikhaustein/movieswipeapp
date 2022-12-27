@@ -52,6 +52,7 @@ export const SwipeScreen = ({ navigation }: any) => {
     const movieService = fireBaseDoc.get("MovieService")
     const movieGenre = fireBaseDoc.get("GenreList")[0]
     const moviePage = fireBaseDoc.get("Page").toString()
+    console.log(moviePage, "####", moviePage.type)
     optionsAxios.params.service = movieService
     optionsAxios.params.genre = movieGenre
     optionsAxios.params.page = moviePage
@@ -119,7 +120,6 @@ export const SwipeScreen = ({ navigation }: any) => {
       if (countRef.current >= moviesAPI.length - 1) {
         await updateDoc(doc(db, "Groups", `${gamePinToGroup}`), {Page: pageRef.current + 1})
         pageRef.current = pageRef.current + 1;
-        optionsAxios.params.page = "" + pageRef.current;
         getMovies();
         console.log("Cast", moviesAPI[movieNumber]["cast"]);
       } else {
@@ -177,7 +177,7 @@ export const SwipeScreen = ({ navigation }: any) => {
           <View>
             {moviesAPI == null ? (
               <View>
-                <ActivityIndicator size="large"/>
+                <ActivityIndicator size="large" color={COLORS.main}/>
               </View>
             ) : (
               <View>
