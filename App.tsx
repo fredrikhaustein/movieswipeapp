@@ -23,15 +23,29 @@ export default function App() {
           options={{ headerShown: false }}
         />
         <Stack.Screen name="Details" component={DetailScreen} />
-        <Stack.Screen name="SwipeScreen" component={SwipeScreen}
-        options={{
-          headerShown: true,
-          title: "Choose Moovie",
-          headerTintColor: COLORS.main,
-          headerStyle: {
-            backgroundColor: COLORS.background,
-          },
-        }}
+        <Stack.Screen
+          name="SwipeScreen"
+          component={SwipeScreen}
+          options={{
+            headerShown: true,
+            title: "Choose Movie",
+            headerTintColor: COLORS.main,
+            headerStyle: {
+              backgroundColor: COLORS.background,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="CreateNewGroupScreen"
+          component={CreateNewGroup}
+          options={{
+            headerShown: true,
+            title: "Choose Movie",
+            headerTintColor: COLORS.main,
+            headerStyle: {
+              backgroundColor: COLORS.background,
+            },
+          }}
         />
         <Stack.Screen
           name="ChooseGenre"

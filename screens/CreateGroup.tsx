@@ -41,7 +41,10 @@ export const CreateGroup = ({ navigation }: any) => {
   const handleAddUserToFireStore = async () => {
     console.log("handleAddUser", groupID);
     await updateDoc(doc(db, "Groups", `${groupID}`), {
-      Users: arrayUnion(`${firebaseAuth.currentUser?.uid}`),
+      Users: arrayUnion({
+        UserID: `${firebaseAuth.currentUser?.uid}`,
+        currentPage: 1,
+      }),
     }).catch((error) => {
       console.log(error.message);
     });

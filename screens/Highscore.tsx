@@ -11,7 +11,13 @@ import {
 import axios from "axios";
 import { useStoreGamePin } from "../store/MovieFilter";
 import { COLORS } from "../values/colors";
-import { deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  deleteDoc,
+  doc,
+  getDoc,
+  onSnapshot,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
 export const Highscore = ({ navigation }: any) => {
@@ -70,6 +76,10 @@ export const Highscore = ({ navigation }: any) => {
 
   const handleOnPressFinish = async () => {
     await deleteDoc(doc(db, "Groups", `${gamePinToGroup}`));
+    handleFinishedPress();
+  };
+
+  const handleFinishedPress = () => {
     navigation.navigate("Home", { type: "anonymous" });
   };
 
@@ -90,6 +100,27 @@ export const Highscore = ({ navigation }: any) => {
       setIsLoading(false);
     });
   }, []);
+
+  const handleUnSubscribe = () => {
+    const unsubscribe = onSnapshot(
+      doc(db, "Groups", `${gamePinToGroup}`),
+      (doc) => {
+        const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
+        const collectedData = doc.data();
+        if (!doc.exists) {
+          handleFinishedPress();
+        }
+      }
+    );
+    return () => {
+      unsubscribe();
+    };
+  };
+
+  // Makes new request to database every 4 sec to check if someone has pressed finish
+  useEffect(() => {
+    handleUnSubscribe();
+  }, [4000]);
 
   return (
     <View

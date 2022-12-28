@@ -4,9 +4,17 @@ import axios from "axios";
 import { Icon } from "@rneui/themed";
 import { useStoreGamePin } from "../store/MovieFilter";
 import { COLORS } from "../values/colors";
-import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
-import { db } from "../firebaseConfig";
+import {
+  arrayRemove,
+  arrayUnion,
+  doc,
+  getDoc,
+  onSnapshot,
+  updateDoc,
+} from "firebase/firestore";
+import { db, firebaseAuth } from "../firebaseConfig";
 import InfoAboutFilmView from "../components/ScreenInScreen/InfoAboutFilmView";
+import { User } from "firebase/auth";
 
 export const SwipeScreen = ({ navigation }: any) => {
   const nrOfMovies = 2;
@@ -48,9 +56,29 @@ export const SwipeScreen = ({ navigation }: any) => {
         console.error(error);
       });
     countRef.current = 0;
-    setMovieNumber(countRef.current);
+    // setMovieNumber(countRef.current);
     // console.log(moviesAPI[movieNumber]["cast"]);
   }
+
+  const setCurrentRefFirestore = async (number: number) => {
+    console.log("Number:", number);
+    await updateDoc(doc(db, "Groups", `${gamePinToGroup}`), {
+      Users: arrayRemove({
+        UserID: `${firebaseAuth.currentUser?.uid}`,
+        currentPage: number - 1,
+      }),
+    }).catch((error) => {
+      console.log(error.message);
+    });
+    await updateDoc(doc(db, "Groups", `${gamePinToGroup}`), {
+      Users: arrayUnion({
+        UserID: `${firebaseAuth.currentUser?.uid}`,
+        currentPage: number,
+      }),
+    }).catch((error) => {
+      console.log(error.message);
+    });
+  };
 
   const handleUnSubscribe = () => {
     const unsubscribe = onSnapshot(
@@ -109,9 +137,30 @@ export const SwipeScreen = ({ navigation }: any) => {
       } else {
         countRef.current = countRef.current + 1;
         setMovieNumber(countRef.current);
+        setCurrentRefFirestore(countRef.current);
       }
     }
   };
+
+  const handleRenderPageAgain = async () => {
+    const docRef = await getDoc(doc(db, "Groups", `${gamePinToGroup}`));
+    if (docRef.exists()) {
+      console.log("HEHEHEHE", docRef.data()["Users"]);
+      console.log(firebaseAuth.currentUser?.uid);
+      const userCurrentPage = docRef
+        .data()
+        ["Users"].find(
+          (user: { UserID: any }) =>
+            user.UserID == firebaseAuth.currentUser?.uid
+        );
+      console.log(userCurrentPage["currentPage"]);
+      setMovieNumber(userCurrentPage["currentPage"]);
+    }
+  };
+
+  useEffect(() => {
+    handleRenderPageAgain();
+  }, []);
 
   const likeMovie = async (like: boolean) => {
     console.log(like);
@@ -146,6 +195,8 @@ export const SwipeScreen = ({ navigation }: any) => {
   const showInfo = () => {
     setShowInfoBool(!showInfoBool);
   };
+
+  console.log("Finale:", movieNumber);
 
   return (
     <>

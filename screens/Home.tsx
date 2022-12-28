@@ -9,7 +9,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import { arrayUnion, collection, getDocs } from "firebase/firestore";
+import { arrayUnion, collection, getDoc, getDocs } from "firebase/firestore";
 import { db, firebaseAuth } from "../firebaseConfig";
 import { signInAnonymously } from "firebase/auth";
 import { doc, updateDoc } from "firebase/firestore";
@@ -33,11 +33,41 @@ export const HomeScreen = ({ navigation }: any) => {
   };
 
   const handleAddUserToFireStore = async () => {
-    await updateDoc(doc(db, "Groups", `${groupID}`), {
-      Users: arrayUnion(`${firebaseAuth.currentUser?.uid}`),
-    }).catch((error) => {
-      console.log(error.message);
-    });
+    var userInList = false;
+    const docRef = await getDoc(doc(db, "Groups", `${gamePinToGroup}`));
+    if (docRef.exists()) {
+      if (docRef.data()["Users"].length == 0) {
+        console.log("JEG ER HEEEEEEEERRRRR");
+        userInList = false;
+      } else {
+        console.log("HEHEHEHE", docRef.data()["Users"]);
+        // console.log(firebaseAuth.currentUser?.uid);
+        const userData = docRef.data()["Users"];
+        console.log("USERDATA:", userData);
+        userData.forEach((user: any) => {
+          console.log("TESTETETET", user["UserID"]);
+          if (user["UserID"] == firebaseAuth.currentUser?.uid) {
+            console.log("TRUE");
+            userInList = true;
+          } else {
+            console.log("FALSE");
+            userInList = false;
+          }
+        });
+      }
+    }
+    console.log("DETTE ER USERINLIST", userInList);
+    if (!userInList) {
+      console.log("JEG ER INNE HER");
+      await updateDoc(doc(db, "Groups", `${groupID}`), {
+        Users: arrayUnion({
+          UserID: `${firebaseAuth.currentUser?.uid}`,
+          currentPage: 0,
+        }),
+      }).catch((error) => {
+        console.log(error.message);
+      });
+    }
   };
 
   const handleOnJoinGroup = async () => {
