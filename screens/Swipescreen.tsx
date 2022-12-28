@@ -1,5 +1,15 @@
 import { useState, useRef, useEffect, useMemo } from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  ScrollView,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  Animated,
+  PanResponder,
+  ActivityIndicator,
+} from "react-native";
 import axios from "axios";
 import { Icon } from "@rneui/themed";
 import { useStoreGamePin } from "../store/MovieFilter";
@@ -21,7 +31,7 @@ export const SwipeScreen = ({ navigation }: any) => {
     method: "GET",
     url: "https://streaming-availability.p.rapidapi.com/search/basic",
     params: {
-      country: "us",
+      country: "it",
       service: "netflix",
       type: "movie",
       genre: "18",
@@ -37,7 +47,13 @@ export const SwipeScreen = ({ navigation }: any) => {
   const [moviesAPI, setMoviesAPI] = useState<any>();
 
   async function getMovies() {
-    console.log("run axios");
+    console.log("Axios");
+    const fireBaseDoc = await getDoc(doc(db, "Groups", `${gamePinToGroup}`));
+    const movieService = fireBaseDoc.get("MovieService");
+    const movieGenre = fireBaseDoc.get("GenreList")[0];
+    optionsAxios.params.service = movieService;
+    optionsAxios.params.genre = movieGenre;
+    optionsAxios.params.page = pageRef.current.toString();
     await axios
       .request(optionsAxios)
       .then(function (response: any) {
@@ -99,11 +115,10 @@ export const SwipeScreen = ({ navigation }: any) => {
     navigation.navigate("Highscore", { type: "anonymous" });
   };
 
-  const nextImage = () => {
+  const nextImage = async () => {
     if (moviesAPI) {
       if (countRef.current >= moviesAPI.length - 1) {
         pageRef.current = pageRef.current + 1;
-        optionsAxios.params.page = "" + pageRef.current;
         getMovies();
         console.log("Cast", moviesAPI[movieNumber]["cast"]);
       } else {
@@ -161,7 +176,7 @@ export const SwipeScreen = ({ navigation }: any) => {
           <View>
             {moviesAPI == null ? (
               <View>
-                <Text>Loading</Text>
+                <ActivityIndicator size="large" color={COLORS.main} />
               </View>
             ) : (
               <View>
