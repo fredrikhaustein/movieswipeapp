@@ -1,6 +1,6 @@
 import { CheckBox } from "@rneui/base";
 import React, { useState } from "react";
-import { Button, View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useStoreMovieFilters } from "../store/MovieFilter";
 import { genreList, genreListSingular } from "../utils/genreSelectionList";
 import { COLORS } from "../values/colors";

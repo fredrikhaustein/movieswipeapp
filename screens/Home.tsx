@@ -9,13 +9,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import {
-  arrayUnion,
-  collection,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
+import { arrayUnion, collection, getDocs } from "firebase/firestore";
 import { db, firebaseAuth } from "../firebaseConfig";
 import { signInAnonymously } from "firebase/auth";
 import { doc, updateDoc } from "firebase/firestore";

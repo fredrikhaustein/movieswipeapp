@@ -1,14 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from "react";
-import {
-  View,
-  ScrollView,
-  Text,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-  Animated,
-  PanResponder,
-} from "react-native";
+import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import axios from "axios";
 import { Icon } from "@rneui/themed";
 import { useStoreGamePin } from "../store/MovieFilter";
@@ -68,18 +59,20 @@ export const SwipeScreen = ({ navigation }: any) => {
         const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
         const collectedData = doc.data();
         if (collectedData) {
-          if (collectedData["Dislikes"] === undefined || collectedData["Dislikes"].length == 0) {
-            setLengthDisLikeAndLike(collectedData["Likes"].length)
-          }
-
-          else if (collectedData["Likes"] === undefined || collectedData["Likes"].length == 0) {
-            setLengthDisLikeAndLike(collectedData["Likes"].length)
-          }
-          else {
-            const totLenSwipedMovies = 
-            collectedData["Dislikes"].length +
-            collectedData["Likes"].length
-            setLengthDisLikeAndLike(totLenSwipedMovies)
+          if (
+            collectedData["Dislikes"] === undefined ||
+            collectedData["Dislikes"].length == 0
+          ) {
+            setLengthDisLikeAndLike(collectedData["Likes"].length);
+          } else if (
+            collectedData["Likes"] === undefined ||
+            collectedData["Likes"].length == 0
+          ) {
+            setLengthDisLikeAndLike(collectedData["Likes"].length);
+          } else {
+            const totLenSwipedMovies =
+              collectedData["Dislikes"].length + collectedData["Likes"].length;
+            setLengthDisLikeAndLike(totLenSwipedMovies);
           }
         }
       }
@@ -97,7 +90,7 @@ export const SwipeScreen = ({ navigation }: any) => {
   }, []);
 
   useEffect(() => {
-    if (lengthDisLikeAndLike >= 14) {
+    if (lengthDisLikeAndLike >= 16) {
       showHighScore();
     }
   }, [lengthDisLikeAndLike]);
@@ -173,10 +166,10 @@ export const SwipeScreen = ({ navigation }: any) => {
             ) : (
               <View>
                 <Image
-                source={{
-                  uri: moviesAPI[movieNumber]["posterURLs"]["original"],
-                }}
-                style={{ width: 320, height: 500 }}
+                  source={{
+                    uri: moviesAPI[movieNumber]["posterURLs"]["original"],
+                  }}
+                  style={{ width: 320, height: 500 }}
                 />
               </View>
             )}
