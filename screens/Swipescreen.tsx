@@ -8,7 +8,7 @@ import {
   StyleSheet,
   Animated,
   PanResponder,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import axios from "axios";
 import { Icon } from "@rneui/themed";
@@ -47,13 +47,13 @@ export const SwipeScreen = ({ navigation }: any) => {
   const [moviesAPI, setMoviesAPI] = useState<any>();
 
   async function getMovies() {
-    console.log("Axios")
+    console.log("Axios");
     const fireBaseDoc = await getDoc(doc(db, "Groups", `${gamePinToGroup}`));
-    const movieService = fireBaseDoc.get("MovieService")
-    const movieGenre = fireBaseDoc.get("GenreList")[0]
-    optionsAxios.params.service = movieService
-    optionsAxios.params.genre = movieGenre
-    optionsAxios.params.page = pageRef.current.toString()
+    const movieService = fireBaseDoc.get("MovieService");
+    const movieGenre = fireBaseDoc.get("GenreList")[0];
+    optionsAxios.params.service = movieService;
+    optionsAxios.params.genre = movieGenre;
+    optionsAxios.params.page = pageRef.current.toString();
     await axios
       .request(optionsAxios)
       .then(function (response: any) {
@@ -75,18 +75,20 @@ export const SwipeScreen = ({ navigation }: any) => {
         const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
         const collectedData = doc.data();
         if (collectedData) {
-          if (collectedData["Dislikes"] === undefined || collectedData["Dislikes"].length == 0) {
-            setLengthDisLikeAndLike(collectedData["Likes"].length)
-          }
-
-          else if (collectedData["Likes"] === undefined || collectedData["Likes"].length == 0) {
-            setLengthDisLikeAndLike(collectedData["Likes"].length)
-          }
-          else {
-            const totLenSwipedMovies = 
-            collectedData["Dislikes"].length +
-            collectedData["Likes"].length
-            setLengthDisLikeAndLike(totLenSwipedMovies)
+          if (
+            collectedData["Dislikes"] === undefined ||
+            collectedData["Dislikes"].length == 0
+          ) {
+            setLengthDisLikeAndLike(collectedData["Likes"].length);
+          } else if (
+            collectedData["Likes"] === undefined ||
+            collectedData["Likes"].length == 0
+          ) {
+            setLengthDisLikeAndLike(collectedData["Likes"].length);
+          } else {
+            const totLenSwipedMovies =
+              collectedData["Dislikes"].length + collectedData["Likes"].length;
+            setLengthDisLikeAndLike(totLenSwipedMovies);
           }
         }
       }
@@ -104,7 +106,7 @@ export const SwipeScreen = ({ navigation }: any) => {
   }, []);
 
   useEffect(() => {
-    if (lengthDisLikeAndLike >= 14) {
+    if (lengthDisLikeAndLike >= 16) {
       showHighScore();
     }
   }, [lengthDisLikeAndLike]);
@@ -174,15 +176,15 @@ export const SwipeScreen = ({ navigation }: any) => {
           <View>
             {moviesAPI == null ? (
               <View>
-                <ActivityIndicator size="large" color={COLORS.main}/>
+                <ActivityIndicator size="large" color={COLORS.main} />
               </View>
             ) : (
               <View>
                 <Image
-                source={{
-                  uri: moviesAPI[movieNumber]["posterURLs"]["original"],
-                }}
-                style={{ width: 320, height: 500 }}
+                  source={{
+                    uri: moviesAPI[movieNumber]["posterURLs"]["original"],
+                  }}
+                  style={{ width: 320, height: 500 }}
                 />
               </View>
             )}

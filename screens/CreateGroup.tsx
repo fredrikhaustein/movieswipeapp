@@ -13,7 +13,6 @@ import { genreateGroupID } from "../utils/genreateGroupID";
 import { useStoreGamePin, useStoreMovieFilters } from "../store/MovieFilter";
 import { signInAnonymously } from "firebase/auth";
 import { COLORS } from "../values/colors";
-import { useFocusEffect } from "@react-navigation/native";
 
 export const CreateGroup = ({ navigation }: any) => {
   const [pressedCreateNewGroup, setPressedCreateNewGroup] = useState(false);
@@ -58,7 +57,6 @@ export const CreateGroup = ({ navigation }: any) => {
       allGroupIds.push(doc.id);
     });
 
-
     // Sjekke at gruppe ikke eksisterer
     // if (allGroupIds.includes(groupID!.toString())) {
     //   setGroupID(genreateGroupID());
@@ -67,11 +65,12 @@ export const CreateGroup = ({ navigation }: any) => {
     console.log("Dette er gruppeid", newgroupID);
     if (newgroupID) {
       await setDoc(doc(db, "Groups", `${newgroupID!.toString()}`), {
-        MovieService: `${selectedMovieService}`,
+        MovieServiec: `${selectedMovieService}`,
         GenreList: selectedGenreList,
         Users: [],
         Likes: [],
-        Dislikes: [], 
+        Dislikes: [],
+        Page: 1,
       });
       setPressedCreateNewGroup(true);
       setGamePin(newgroupID.toString());
