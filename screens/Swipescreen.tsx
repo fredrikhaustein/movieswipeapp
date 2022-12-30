@@ -51,8 +51,8 @@ export const SwipeScreen = ({ navigation }: any) => {
     const fireBaseDoc = await getDoc(doc(db, "Groups", `${gamePinToGroup}`));
     const movieService = fireBaseDoc.get("MovieService");
     const movieGenre = fireBaseDoc.get("GenreList")[0];
-    console.log("Service", movieService)
-    optionsAxios.params.service = "netflix"
+    console.log("Service", movieService);
+    optionsAxios.params.service = "netflix";
     optionsAxios.params.genre = movieGenre;
     optionsAxios.params.page = pageRef.current.toString();
     await axios
@@ -163,6 +163,10 @@ export const SwipeScreen = ({ navigation }: any) => {
     setShowInfoBool(!showInfoBool);
   };
 
+  const handleOnPressToHighscoreList = () => {
+    navigation.navigate("Highscore", { type: "anonymous" });
+  };
+
   return (
     <>
       <View
@@ -221,6 +225,14 @@ export const SwipeScreen = ({ navigation }: any) => {
           <Icon name="check" color={COLORS.background} />
         </TouchableOpacity>
       </View>
+      <View style={{ backgroundColor: COLORS.background }}>
+        <TouchableOpacity
+          style={styles.buttonHighscore}
+          onPress={handleOnPressToHighscoreList}
+        >
+          <Text style={styles.textField_button}>Show highscore list</Text>
+        </TouchableOpacity>
+      </View>
     </>
   );
 };
@@ -232,6 +244,25 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
     paddingHorizontal: 30,
+  },
+  buttonHighscore: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 5,
+    paddingHorizontal: 32,
+    elevation: 3,
+    borderColor: COLORS.main,
+    backgroundColor: COLORS.main,
+    borderRadius: 10,
+    marginBottom: 10,
+    marginLeft: 30,
+    marginRight: 30,
+  },
+  textField_button: {
+    padding: 10,
+    fontSize: 20,
+    marginBottom: 10,
+    color: COLORS.background,
   },
   textField: {
     fontSize: 20,
@@ -247,7 +278,9 @@ const styles = StyleSheet.create({
     borderColor: COLORS.main,
     backgroundColor: COLORS.main,
     borderRadius: 400,
-    margin: 20,
+    marginTop: 0,
+    marginLeft: 20,
+    marginRight: 20,
   },
 });
 /*<Animated.View
