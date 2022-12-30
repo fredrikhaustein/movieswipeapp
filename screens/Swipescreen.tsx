@@ -50,7 +50,7 @@ export const SwipeScreen = ({ navigation }: any) => {
     console.log("Axios");
     const fireBaseDoc = await getDoc(doc(db, "Groups", `${gamePinToGroup}`));
     const movieService = fireBaseDoc.get("MovieService");
-    const movieGenre = fireBaseDoc.get("GenreList")[0];
+    const movieGenre = fireBaseDoc.get("Genre");
     console.log("Service", movieService);
     optionsAxios.params.service = "netflix";
     optionsAxios.params.genre = movieGenre;

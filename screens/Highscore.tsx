@@ -17,7 +17,8 @@ import { db } from "../firebaseConfig";
 export const Highscore = ({ navigation }: any) => {
   const gamePinToGroup = useStoreGamePin((state) => state.gamePin);
   const [isLoading, setIsLoading] = useState(true);
-  const [posterURL, setPosterURL] = useState<string[]>();
+  const [posterURLPartOne, setPosterURLPartOne] = useState<string[]>();
+  const [posterURLPartTwo, setPosterURLPartTwo] = useState<string[]>();
   const options = {
     method: "GET",
     url: "https://moviesdatabase.p.rapidapi.com/titles/",
@@ -53,8 +54,8 @@ export const Highscore = ({ navigation }: any) => {
         .catch(function (error: any) {
           console.error(error);
         });
-      console.log("posters", posters);
-      setPosterURL(posters);
+      setPosterURLPartOne(posters.slice(0, 3));
+      setPosterURLPartTwo(posters.slice(3, 6));
     });
   }
 
@@ -64,7 +65,6 @@ export const Highscore = ({ navigation }: any) => {
     for (const [key] of items) {
       sorted.push(key);
     }
-    console.log("sorted", sorted);
     return sorted.slice(0, 10);
   }
 
@@ -77,9 +77,7 @@ export const Highscore = ({ navigation }: any) => {
     const fireBaseDoc = await getDoc(doc(db, "Groups", `${gamePinToGroup}`));
     const likesRest = fireBaseDoc.get("Likes");
     likesRest.sort();
-    console.log("LikeRest sort", likesRest);
     const counts = countElements(likesRest);
-    console.log(counts);
     const toplist = getTopList(counts);
     return toplist;
   }
@@ -103,10 +101,10 @@ export const Highscore = ({ navigation }: any) => {
       <Text style={styles.textFieldStyle}>
         Top Picks for group {gamePinToGroup}
       </Text>
-      {posterURL != undefined && !isLoading ? (
+      {posterURLPartOne != undefined && !isLoading ? (
         <View style={{ flexDirection: "row" }}>
           <FlatList
-            data={posterURL.slice(0, 3)}
+            data={posterURLPartOne}
             renderItem={({ item, index }) => (
               <View style={styles.item}>
                 <Text style={styles.number}>{index + 1}</Text>
@@ -116,7 +114,7 @@ export const Highscore = ({ navigation }: any) => {
             keyExtractor={(item) => item}
           />
           <FlatList
-            data={posterURL.slice(3, 6)}
+            data={posterURLPartTwo}
             renderItem={({ item, index }) => (
               <View style={styles.item}>
                 <Text style={styles.number}>{index + 4}</Text>

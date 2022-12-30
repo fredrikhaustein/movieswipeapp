@@ -66,7 +66,7 @@ export const CreateGroup = ({ navigation }: any) => {
     if (newgroupID) {
       await setDoc(doc(db, "Groups", `${newgroupID!.toString()}`), {
         MovieService: `${selectedMovieService}`,
-        GenreList: selectedGenreList,
+        Genre: selectedGenreList,
         Users: [],
         Likes: [],
         Dislikes: [],

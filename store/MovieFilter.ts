@@ -4,7 +4,7 @@ import { genreList } from '../utils/genreSelectionList';
 
 interface GenreState {
     streamingService:string;
-    genreList: string[];
+    genreList: string;
     setStreamingService: (service: string) => void;
     setGenreList: (newItem: string) => void;
   }
