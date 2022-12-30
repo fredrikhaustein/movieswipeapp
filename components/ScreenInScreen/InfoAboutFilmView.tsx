@@ -33,10 +33,9 @@ export default InfoAboutFilmView;
 const styles = StyleSheet.create({
   viewBox: {
     marginTop: 30,
-    marginLeft: 10,
-    marginRight: 10,
+    marginLeft: 35,
+    marginRight: 35,
     borderColor: "#000000",
-    marginBottom: 45,
     borderWidth: 4,
     borderRadius: 5,
   },
