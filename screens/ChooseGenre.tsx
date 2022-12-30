@@ -20,18 +20,12 @@ export const ChooseGenre = ({ navigation }: any) => {
   const setGenre = useStoreMovieFilters((state) => state.setGenreList);
 
   const handleOnChange = (position: number) => {
-    const updatedCheckedState: boolean[] = checkedState.map((item, index) =>
-      index === position ? !item : item
+    const updatedCheckedState = checkedState.map((item, index) =>
+      index === position ? true : false
     );
     setCheckedState(updatedCheckedState);
-    const newListGenre: string[] = [];
-    updatedCheckedState.map((item, index) => {
-      if (item) {
-        newListGenre.push(genreList[index].apiKey);
-      }
-    });
-    console.log(newListGenre);
-    setGenre(newListGenre);
+    console.log("DETTE ER GENRE::::::::", genreList[position]["apiKey"]);
+    setGenre(genreList[position]["apiKey"]);
   };
 
   return (
