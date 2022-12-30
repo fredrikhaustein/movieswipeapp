@@ -11,6 +11,7 @@ import CreateGroup from "./screens/CreateGroup";
 import { Highscore } from "./screens/Highscore";
 import { COLORS } from "./values/colors";
 import { Colors } from "react-native/Libraries/NewAppScreen";
+import { RandomMovie } from "./screens/RandomMovie";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -23,15 +24,17 @@ export default function App() {
           options={{ headerShown: false }}
         />
         <Stack.Screen name="Details" component={DetailScreen} />
-        <Stack.Screen name="SwipeScreen" component={SwipeScreen}
-        options={{
-          headerShown: true,
-          title: "Choose Moovie",
-          headerTintColor: COLORS.main,
-          headerStyle: {
-            backgroundColor: COLORS.background,
-          },
-        }}
+        <Stack.Screen
+          name="SwipeScreen"
+          component={SwipeScreen}
+          options={{
+            headerShown: true,
+            title: "Choose Moovie",
+            headerTintColor: COLORS.main,
+            headerStyle: {
+              backgroundColor: COLORS.background,
+            },
+          }}
         />
         <Stack.Screen
           name="ChooseGenre"
@@ -75,6 +78,18 @@ export default function App() {
           options={{
             headerShown: true,
             title: "",
+            headerTintColor: COLORS.main,
+            headerStyle: {
+              backgroundColor: COLORS.background,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="RandomMovie"
+          component={RandomMovie}
+          options={{
+            headerShown: true,
+            title: "Random Movie",
             headerTintColor: COLORS.main,
             headerStyle: {
               backgroundColor: COLORS.background,

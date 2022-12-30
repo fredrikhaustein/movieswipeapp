@@ -9,7 +9,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import { arrayUnion, collection, getDocs } from "firebase/firestore";
+import { arrayUnion, collection, getDoc, getDocs } from "firebase/firestore";
 import { db, firebaseAuth } from "../firebaseConfig";
 import { signInAnonymously } from "firebase/auth";
 import { doc, updateDoc } from "firebase/firestore";
@@ -24,20 +24,30 @@ export const HomeScreen = ({ navigation }: any) => {
   const gamePinToGroup = useStoreGamePin((state) => state.gamePin);
 
   const handleSignIn = async () => {
-    signInAnonymously(firebaseAuth)
-      .then(() => navigation.navigate("SwipeScreen", { type: "anonymous" }))
-      .catch((error) => {
-        setErrorOnJoiningGroup("Something went wrong while joining the group");
-        console.log(error.message);
-      });
+    signInAnonymously(firebaseAuth).catch((error) => {
+      setErrorOnJoiningGroup("Something went wrong while joining the group");
+      console.log(error.message);
+    });
   };
 
   const handleAddUserToFireStore = async () => {
-    await updateDoc(doc(db, "Groups", `${groupID}`), {
-      Users: arrayUnion(`${firebaseAuth.currentUser?.uid}`),
-    }).catch((error) => {
-      console.log(error.message);
-    });
+    const fireBaseDoc = await getDoc(doc(db, "Groups", `${gamePinToGroup}`));
+    const users = fireBaseDoc.get("Users");
+    console.log("USERS HOME SCREEN", users);
+    const bool = users.some(
+      (user: any) => user["UserID"] == firebaseAuth.currentUser?.uid
+    );
+    console.log(bool);
+    if (!bool) {
+      await updateDoc(doc(db, "Groups", `${groupID}`), {
+        Users: arrayUnion({
+          UserID: `${firebaseAuth.currentUser?.uid}`,
+          userCurrentPage: 0,
+        }),
+      }).catch((error) => {
+        console.log(error.message);
+      });
+    }
   };
 
   const handleOnJoinGroup = async () => {
@@ -59,6 +69,10 @@ export const HomeScreen = ({ navigation }: any) => {
     } else {
       setErrorWithGroupID(true);
     }
+  };
+
+  const handleRandomMoviePress = () => {
+    navigation.navigate("RandomMovie");
   };
 
   useEffect(() => console.log(groupID), [groupID]);
@@ -106,14 +120,12 @@ export const HomeScreen = ({ navigation }: any) => {
         >
           <Text style={styles.textField_button}>Create new group</Text>
         </TouchableOpacity>
-        {/* <Button
-        title="Go to Details"
-        onPress={() => navigation.navigate("Details")}
-      />
-      <Button
-      title="Go to swipecard"
-      onPress={() => navigation.navigate("SwipeScreen")}
-    /> */}
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleRandomMoviePress}
+        >
+          <Text style={styles.textField_button}>Random Movie</Text>
+        </TouchableOpacity>
       </View>
     </TouchableWithoutFeedback>
   );
