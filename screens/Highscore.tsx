@@ -7,19 +7,35 @@ import {
   StyleSheet,
   FlatList,
   ActivityIndicator,
+  Alert,
+  Modal,
+  Linking,
 } from "react-native";
 import axios from "axios";
 import { useStoreGamePin } from "../store/MovieFilter";
 import { COLORS } from "../values/colors";
 import { deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
+import { Link } from "@react-navigation/native";
+import { Icon } from "@rneui/base";
+
+
+
 
 export const Highscore = ({ navigation }: any) => {
   const gamePinToGroup = useStoreGamePin((state) => state.gamePin);
   const [isLoading, setIsLoading] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false)
+  const [streamingLink, setStreamingLink] = useState<string>("https://play.hbomax.com");
   const [posterURLPartOne, setPosterURLPartOne] = useState<string[]>();
   const [posterURLPartTwo, setPosterURLPartTwo] = useState<string[]>();
-  const options = {
+  const streamingLinks = {
+  "netflix": "https://www.netflix.com/",
+  "disney": "https://www.disneyplus.com/",
+  "prime": "https://www.primevideo.com/",
+  "apple": "https://tv.apple.com/",
+}
+  const posterOptions = {
     method: "GET",
     url: "https://moviesdatabase.p.rapidapi.com/titles/",
     headers: {
@@ -44,9 +60,9 @@ export const Highscore = ({ navigation }: any) => {
     const posters: string[] = [];
     toplist.forEach(async (val) => {
       const posterUrl = "https://moviesdatabase.p.rapidapi.com/titles/" + val;
-      options.url = posterUrl;
+      posterOptions.url = posterUrl;
       await axios
-        .request(options)
+        .request(posterOptions)
         .then(function (response: any) {
           console.log("Response Data", response.data);
           posters.push(response.data.results["primaryImage"]["url"].toString());
@@ -73,9 +89,19 @@ export const Highscore = ({ navigation }: any) => {
     navigation.navigate("Home", { type: "anonymous" });
   };
 
+  const handleImageClick = () =>  {
+    setModalVisible(true)
+  }
+
   async function getLikesFromDb(): Promise<string[]> {
     const fireBaseDoc = await getDoc(doc(db, "Groups", `${gamePinToGroup}`));
     const likesRest = fireBaseDoc.get("Likes");
+    const service: string = fireBaseDoc.get("MovieService").toString()
+    Object.entries(streamingLinks).map(([key, val]) => {
+      if (key === service) {
+        setStreamingLink(val)
+      }
+    })
     likesRest.sort();
     const counts = countElements(likesRest);
     const toplist = getTopList(counts);
@@ -89,6 +115,8 @@ export const Highscore = ({ navigation }: any) => {
     });
   }, []);
 
+
+
   return (
     <View
       style={{
@@ -101,25 +129,40 @@ export const Highscore = ({ navigation }: any) => {
       <Text style={styles.textFieldStyle}>
         Top Picks for group {gamePinToGroup}
       </Text>
+      <Modal 
+        visible={modalVisible}
+        animationType="slide"
+        onRequestClose={() => setModalVisible(false)}
+        transparent={true}
+        >
+          <View style={styles.modalView}>
+            <Text onPress={() => Linking.openURL(streamingLink)}>Go to Stream</Text>
+            
+          </View>
+      </Modal>
       {posterURLPartOne != undefined && !isLoading ? (
         <View style={{ flexDirection: "row" }}>
           <FlatList
             data={posterURLPartOne}
             renderItem={({ item, index }) => (
-              <View style={styles.item}>
-                <Text style={styles.number}>{index + 1}</Text>
-                <Image source={{ uri: item }} style={styles.image} />
-              </View>
+              <TouchableOpacity onPress={handleImageClick}>
+                <View style={styles.item}>
+                  <Text style={styles.number}>{index + 1}</Text>
+                  <Image source={{ uri: item }} style={styles.image} />
+                </View>
+              </TouchableOpacity>
             )}
             keyExtractor={(item) => item}
           />
           <FlatList
             data={posterURLPartTwo}
             renderItem={({ item, index }) => (
-              <View style={styles.item}>
-                <Text style={styles.number}>{index + 4}</Text>
-                <Image source={{ uri: item }} style={styles.image} />
-              </View>
+              <TouchableOpacity onPress={handleImageClick}>
+                <View style={styles.item}>
+                  <Text style={styles.number}>{index + 4}</Text>
+                  <Image source={{ uri: item }} style={styles.image} />
+                </View>
+              </TouchableOpacity>
             )}
             keyExtractor={(item) => item}
           />
@@ -161,5 +204,22 @@ const styles = StyleSheet.create({
   image: {
     width: 120,
     height: 120,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: COLORS.background,
+    borderRadius: 20,
+    padding: 35,
+    top: 200,
+    height: 200,
+    alignItems: "center",
+    shadowColor: COLORS.main,
+    shadowOffset: {
+      width: 2,
+      height: 6
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
   },
 });
