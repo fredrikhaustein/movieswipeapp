@@ -20,11 +20,11 @@
         service: "Prime",
         apiKey: "prime",
       },
-      {
-        id: "HBO",
-        service: "HBO",
-        apiKey: "hbo",
-      },
+      // {
+      //   id: "HBO",
+      //   service: "HBO",
+      //   apiKey: "hbo",
+      // },
       {
         id: "AppleTV",
         service: "Apple",
