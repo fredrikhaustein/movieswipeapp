@@ -31,6 +31,8 @@ export const Highscore = ({ navigation }: any) => {
   const [streamingLink, setStreamingLink] = useState<string>("https://play.hbomax.com");
   const [posterURLPartOne, setPosterURLPartOne] = useState<string[]>();
   const [posterURLPartTwo, setPosterURLPartTwo] = useState<string[]>();
+  let postOne: string[] = []; 
+  let postTwo: string[] = []; 
   const streamingLinks = {
   "netflix": "https://www.netflix.com/",
   "disney": "https://www.disneyplus.com/",
@@ -59,23 +61,42 @@ export const Highscore = ({ navigation }: any) => {
   }
 
   async function getMoviePosters(toplist: string[]) {
-    const posters: string[] = [];
-    toplist.forEach(async (imdbId, idx, array) => {
+    const postersPromise = toplist.map(async (imdbId) => {
+      console.log(imdbId)
       const posterUrl = "https://moviesdatabase.p.rapidapi.com/titles/" + imdbId;
-      posterOptions.url = posterUrl;
-      await axios
-        .request(posterOptions)
-        .then(function (response: any) {
-          posters.push(response.data.results["primaryImage"]["url"].toString());
-        })
-        .catch(function (error: any) {
-          console.error(error);
-        });
-      if (idx = array.length - 1) {
-        setPosterURLPartOne(posters.slice(0, 3));
-        setPosterURLPartTwo(posters.slice(3, 6));
+      posterOptions.url = posterUrl
+      try {
+        const response = await axios.request(posterOptions);
+        return response.data.results["primaryImage"]["url"].toString();
+      } catch (error) {
+        console.error(error);
       }
-    });
+    })
+    const posters = await Promise.all(postersPromise)
+    setPosterURLPartOne(posters.slice(0, 3))
+    setPosterURLPartTwo(posters.slice(3, 6))
+    console.log("#####")
+    // const posters: string[] = [];
+    // toplist.forEach(async (imdbId) => {
+    //   console.log(imdbId)
+    //   const posterUrl = "https://moviesdatabase.p.rapidapi.com/titles/" + imdbId;
+    //   posterOptions.url = posterUrl;
+    //   await axios
+    //     .request(posterOptions)
+    //     .then(function (response: any) {
+    //       posters.push(response.data.results["primaryImage"]["url"].toString());
+    //     })
+    //     .catch(function (error: any) {
+    //       console.error(error);
+    //     });
+    //   console.log("post", posters)
+    //   setPosterURLPartOne(posters);
+    //   // setPosterURLPartTwo(posters.slice(0, 3));
+      // postOne = posters
+      // postTwo = posters.slice(0, 3)
+      // console.log("one", postOne)
+      // console.log("two", postTwo)
+    // });
   }
 
   function getTopList(counts: { [key: string]: number }): string[] {
