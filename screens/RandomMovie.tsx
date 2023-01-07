@@ -21,6 +21,7 @@ export const RandomMovie = () => {
   const [isInfo, setShowInfo] = useState(false);
   const [randomMovie, setRandomMovie] = useState();
   const [refresh, setRefresh] = useState(false);
+  const [showActivityIndicator, setShowActivityIndicator] = useState(true)
   const optionsAxios = {
     method: "GET",
     url: "https://streaming-availability.p.rapidapi.com/search/basic",
@@ -47,9 +48,12 @@ export const RandomMovie = () => {
         const data = response.data.results;
         const number = generateRandomNr(data.length);
         setRandomMovie(data[number]);
+        setShowActivityIndicator(false)
+        console.log("Movie set sucessfully")
       })
       .catch(function (error: any) {
         console.error(error);
+        setRefresh(!refresh)
       });
   }
 
@@ -57,13 +61,24 @@ export const RandomMovie = () => {
     const genreLength = genreListSingular.length
     const genreIndex = Math.floor(Math.random()  * (genreLength + 1))
     const page = Math.floor(Math.random() * (4)).toString()
-    optionsAxios.params.genre = genreList[genreIndex].apiKey
-    optionsAxios.params.page = page
-    
+    if (genreList[genreIndex].apiKey === undefined) {
+      console.log("Genrelist is undefined. Setting to Comedy")
+      optionsAxios.params.genre = "35"}
+    else {
+      optionsAxios.params.genre = genreList[genreIndex].apiKey
+    }
+    if (page === undefined) {
+      console.log("page is undefined")
+      optionsAxios.params.page = "1"
+    }
+    else {
+      optionsAxios.params.page = page
+    }
   })
 
 
   useEffect(() => {
+    setShowActivityIndicator(true)
     setRandomParam();
     getMovies();
   }, [refresh]);
@@ -79,15 +94,13 @@ export const RandomMovie = () => {
     >
       {!isInfo || randomMovie === undefined ? (
         <View>
-          {randomMovie == null ? (
-            <View>
+          {randomMovie == null || showActivityIndicator ? (
+            <View style= {{height: 500}}>
+            <View style={{height: 250}}/>
               <ActivityIndicator size="large" color={COLORS.main} />
             </View>
           ) : (
             <View>
-              <Text style={styles.textFieldStyle}>
-                {randomMovie["originalTitle"]}
-              </Text>
               <Image
                 source={{
                   uri: randomMovie["posterURLs"]["original"],
@@ -98,13 +111,15 @@ export const RandomMovie = () => {
           )}
         </View>
       ) : (
-        <View style={{ flex: 1, maxHeight: 550 }}>
+        <View style={{height: 500}}>
+        <View style={{ flex: 1, maxHeight: 500 }}>
           <InfoAboutFilmView
             title={randomMovie["originalTitle"]}
             imdbRating={randomMovie["imdbRating"]}
             cast={randomMovie["cast"]}
             overview={randomMovie["overview"]}
           />
+        </View>
         </View>
       )}
       <View
