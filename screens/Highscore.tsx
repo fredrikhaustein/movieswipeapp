@@ -14,31 +14,36 @@ import {
 import axios from "axios";
 import { useStoreGamePin } from "../store/MovieFilter";
 import { COLORS } from "../values/colors";
-import { deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  deleteDoc,
+  doc,
+  getDoc,
+  onSnapshot,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { Link } from "@react-navigation/native";
 import { Icon } from "@rneui/base";
 import { link } from "fs";
 
-
-
-
 export const Highscore = ({ navigation }: any) => {
   const gamePinToGroup = useStoreGamePin((state) => state.gamePin);
   const [isLoading, setIsLoading] = useState(true);
   const [refresh, setRefresh] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false)
-  const [streamingLink, setStreamingLink] = useState<string>("https://play.hbomax.com");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [streamingLink, setStreamingLink] = useState<string>(
+    "https://play.hbomax.com"
+  );
   const [posterURLPartOne, setPosterURLPartOne] = useState<string[]>();
   const [posterURLPartTwo, setPosterURLPartTwo] = useState<string[]>();
-  let postOne: string[] = []; 
-  let postTwo: string[] = []; 
+  let postOne: string[] = [];
+  let postTwo: string[] = [];
   const streamingLinks = {
-  "netflix": "https://www.netflix.com/",
-  "disney": "https://www.disneyplus.com/",
-  "prime": "https://www.primevideo.com/",
-  "apple": "https://tv.apple.com/",
-}
+    netflix: "https://www.netflix.com/",
+    disney: "https://www.disneyplus.com/",
+    prime: "https://www.primevideo.com/",
+    apple: "https://tv.apple.com/",
+  };
   const posterOptions = {
     method: "GET",
     url: "https://moviesdatabase.p.rapidapi.com/titles/",
@@ -62,20 +67,21 @@ export const Highscore = ({ navigation }: any) => {
 
   async function getMoviePosters(toplist: string[]) {
     const postersPromise = toplist.map(async (imdbId) => {
-      console.log(imdbId)
-      const posterUrl = "https://moviesdatabase.p.rapidapi.com/titles/" + imdbId;
-      posterOptions.url = posterUrl
+      console.log(imdbId);
+      const posterUrl =
+        "https://moviesdatabase.p.rapidapi.com/titles/" + imdbId;
+      posterOptions.url = posterUrl;
       try {
         const response = await axios.request(posterOptions);
         return response.data.results["primaryImage"]["url"].toString();
       } catch (error) {
         console.error(error);
       }
-    })
-    const posters = await Promise.all(postersPromise)
-    setPosterURLPartOne(posters.slice(0, 3))
-    setPosterURLPartTwo(posters.slice(3, 6))
-    console.log("#####")
+    });
+    const posters = await Promise.all(postersPromise);
+    setPosterURLPartOne(posters.slice(0, 3));
+    setPosterURLPartTwo(posters.slice(3, 6));
+    console.log("#####");
     // const posters: string[] = [];
     // toplist.forEach(async (imdbId) => {
     //   console.log(imdbId)
@@ -92,10 +98,10 @@ export const Highscore = ({ navigation }: any) => {
     //   console.log("post", posters)
     //   setPosterURLPartOne(posters);
     //   // setPosterURLPartTwo(posters.slice(0, 3));
-      // postOne = posters
-      // postTwo = posters.slice(0, 3)
-      // console.log("one", postOne)
-      // console.log("two", postTwo)
+    // postOne = posters
+    // postTwo = posters.slice(0, 3)
+    // console.log("one", postOne)
+    // console.log("two", postTwo)
     // });
   }
 
@@ -103,9 +109,9 @@ export const Highscore = ({ navigation }: any) => {
     const sorted: string[] = [];
     const items = Object.entries(counts).sort((a, b) => {
       if (b[1] === a[1]) {
-        return a[0].localeCompare(b[0])
+        return a[0].localeCompare(b[0]);
       }
-      return b[1] - a[1]
+      return b[1] - a[1];
     });
     for (const [key] of items) {
       sorted.push(key);
@@ -118,19 +124,23 @@ export const Highscore = ({ navigation }: any) => {
     navigation.navigate("Home", { type: "anonymous" });
   };
 
-  const handleImageClick = () =>  {
-    setModalVisible(true)
-  }
+  const handleFinishedPress = () => {
+    navigation.navigate("Home", { type: "anonymous" });
+  };
+
+  const handleImageClick = () => {
+    setModalVisible(true);
+  };
 
   async function getLikesFromDb(): Promise<string[]> {
     const fireBaseDoc = await getDoc(doc(db, "Groups", `${gamePinToGroup}`));
     const likesRest = fireBaseDoc.get("Likes");
-    const service: string = fireBaseDoc.get("MovieService").toString()
+    const service: string = fireBaseDoc.get("MovieService").toString();
     Object.entries(streamingLinks).map(([key, val]) => {
       if (key === service) {
-        setStreamingLink(val)
+        setStreamingLink(val);
       }
-    })
+    });
     likesRest.sort();
     const counts = countElements(likesRest);
     const toplist = getTopList(counts);
@@ -144,7 +154,27 @@ export const Highscore = ({ navigation }: any) => {
     });
   }, [refresh]);
 
+  const handleUnSubscribe = () => {
+    const unsubscribe = onSnapshot(
+      doc(db, "Groups", `${gamePinToGroup}`),
+      (doc) => {
+        const collectedData = doc.data();
+        if (collectedData == undefined) {
+          handleFinishedPress();
+        }
+      }
+    );
+    return () => {
+      unsubscribe();
+    };
+  };
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      handleUnSubscribe();
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <View
@@ -158,56 +188,59 @@ export const Highscore = ({ navigation }: any) => {
       <Text style={styles.textFieldStyle}>
         Top Picks for group {gamePinToGroup}
       </Text>
-      <Modal 
+      <Modal
         visible={modalVisible}
         animationType="slide"
         onRequestClose={() => setModalVisible(false)}
         transparent={true}
-        >
-          <View style={styles.modalView}>
-            <View style={{height: 200}}/>
-            <Text style={styles.textFieldStyle} onPress={() => Linking.openURL(streamingLink)}>Go to Stream</Text>
-            
-          </View>
-      </Modal>
-      <View style={{height: 450}}>
-
-      {posterURLPartOne != undefined && !isLoading ? (
-        <View style={{ flexDirection: "row" }}>
-          <FlatList
-            data={posterURLPartOne}
-            renderItem={({ item, index }) => (
-              <TouchableOpacity onPress={handleImageClick}>
-                <View style={styles.item}>
-                  <Text style={styles.number}>{index + 1}</Text>
-                  <Image source={{ uri: item }} style={styles.image} />
-                </View>
-              </TouchableOpacity>
-            )}
-            keyExtractor={(item) => item}
-            />
-          <FlatList
-            data={posterURLPartTwo}
-            renderItem={({ item, index }) => (
-              <TouchableOpacity onPress={handleImageClick}>
-                <View style={styles.item}>
-                  <Text style={styles.number}>{index + 4}</Text>
-                  <Image source={{ uri: item }} style={styles.image} />
-                </View>
-              </TouchableOpacity>
-            )}
-            keyExtractor={(item) => item}
-            />
+      >
+        <View style={styles.modalView}>
+          <View style={{ height: 200 }} />
+          <Text
+            style={styles.textFieldStyle}
+            onPress={() => Linking.openURL(streamingLink)}
+          >
+            Go to Stream
+          </Text>
         </View>
-      ) : (
-        <ActivityIndicator />
+      </Modal>
+      <View style={{ height: 450 }}>
+        {posterURLPartOne != undefined && !isLoading ? (
+          <View style={{ flexDirection: "row" }}>
+            <FlatList
+              data={posterURLPartOne}
+              renderItem={({ item, index }) => (
+                <TouchableOpacity onPress={handleImageClick}>
+                  <View style={styles.item}>
+                    <Text style={styles.number}>{index + 1}</Text>
+                    <Image source={{ uri: item }} style={styles.image} />
+                  </View>
+                </TouchableOpacity>
+              )}
+              keyExtractor={(item) => item}
+            />
+            <FlatList
+              data={posterURLPartTwo}
+              renderItem={({ item, index }) => (
+                <TouchableOpacity onPress={handleImageClick}>
+                  <View style={styles.item}>
+                    <Text style={styles.number}>{index + 4}</Text>
+                    <Image source={{ uri: item }} style={styles.image} />
+                  </View>
+                </TouchableOpacity>
+              )}
+              keyExtractor={(item) => item}
+            />
+          </View>
+        ) : (
+          <ActivityIndicator />
         )}
       </View>
       <TouchableOpacity
         style={styles.finishedButton}
         onPress={() => setRefresh(!refresh)}
-        >
-        <Text style={{ fontSize: 20, color: COLORS.background}}>Refresh</Text>
+      >
+        <Text style={{ fontSize: 20, color: COLORS.background }}>Refresh</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.finishedButton}
@@ -254,10 +287,10 @@ const styles = StyleSheet.create({
     shadowColor: COLORS.main,
     shadowOffset: {
       width: 2,
-      height: 6
+      height: 6,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5
+    elevation: 5,
   },
 });
