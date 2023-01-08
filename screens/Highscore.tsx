@@ -24,16 +24,20 @@ import {
 import { db } from "../firebaseConfig";
 import { Link } from "@react-navigation/native";
 import { Icon } from "@rneui/base";
+import { link } from "fs";
 
 export const Highscore = ({ navigation }: any) => {
   const gamePinToGroup = useStoreGamePin((state) => state.gamePin);
   const [isLoading, setIsLoading] = useState(true);
+  const [refresh, setRefresh] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [streamingLink, setStreamingLink] = useState<string>(
     "https://play.hbomax.com"
   );
   const [posterURLPartOne, setPosterURLPartOne] = useState<string[]>();
   const [posterURLPartTwo, setPosterURLPartTwo] = useState<string[]>();
+  let postOne: string[] = [];
+  let postTwo: string[] = [];
   const streamingLinks = {
     netflix: "https://www.netflix.com/",
     disney: "https://www.disneyplus.com/",
@@ -62,27 +66,53 @@ export const Highscore = ({ navigation }: any) => {
   }
 
   async function getMoviePosters(toplist: string[]) {
-    const posters: string[] = [];
-    toplist.forEach(async (val) => {
-      const posterUrl = "https://moviesdatabase.p.rapidapi.com/titles/" + val;
+    const postersPromise = toplist.map(async (imdbId) => {
+      console.log(imdbId);
+      const posterUrl =
+        "https://moviesdatabase.p.rapidapi.com/titles/" + imdbId;
       posterOptions.url = posterUrl;
-      await axios
-        .request(posterOptions)
-        .then(function (response: any) {
-          console.log("Response Data", response.data);
-          posters.push(response.data.results["primaryImage"]["url"].toString());
-        })
-        .catch(function (error: any) {
-          console.error(error);
-        });
-      setPosterURLPartOne(posters.slice(0, 3));
-      setPosterURLPartTwo(posters.slice(3, 6));
+      try {
+        const response = await axios.request(posterOptions);
+        return response.data.results["primaryImage"]["url"].toString();
+      } catch (error) {
+        console.error(error);
+      }
     });
+    const posters = await Promise.all(postersPromise);
+    setPosterURLPartOne(posters.slice(0, 3));
+    setPosterURLPartTwo(posters.slice(3, 6));
+    console.log("#####");
+    // const posters: string[] = [];
+    // toplist.forEach(async (imdbId) => {
+    //   console.log(imdbId)
+    //   const posterUrl = "https://moviesdatabase.p.rapidapi.com/titles/" + imdbId;
+    //   posterOptions.url = posterUrl;
+    //   await axios
+    //     .request(posterOptions)
+    //     .then(function (response: any) {
+    //       posters.push(response.data.results["primaryImage"]["url"].toString());
+    //     })
+    //     .catch(function (error: any) {
+    //       console.error(error);
+    //     });
+    //   console.log("post", posters)
+    //   setPosterURLPartOne(posters);
+    //   // setPosterURLPartTwo(posters.slice(0, 3));
+    // postOne = posters
+    // postTwo = posters.slice(0, 3)
+    // console.log("one", postOne)
+    // console.log("two", postTwo)
+    // });
   }
 
   function getTopList(counts: { [key: string]: number }): string[] {
     const sorted: string[] = [];
-    const items = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    const items = Object.entries(counts).sort((a, b) => {
+      if (b[1] === a[1]) {
+        return a[0].localeCompare(b[0]);
+      }
+      return b[1] - a[1];
+    });
     for (const [key] of items) {
       sorted.push(key);
     }
@@ -122,7 +152,7 @@ export const Highscore = ({ navigation }: any) => {
       getMoviePosters(res);
       setIsLoading(false);
     });
-  }, []);
+  }, [refresh]);
 
   const handleUnSubscribe = () => {
     const unsubscribe = onSnapshot(
@@ -165,46 +195,58 @@ export const Highscore = ({ navigation }: any) => {
         transparent={true}
       >
         <View style={styles.modalView}>
-          <Text onPress={() => Linking.openURL(streamingLink)}>
+          <View style={{ height: 200 }} />
+          <Text
+            style={styles.textFieldStyle}
+            onPress={() => Linking.openURL(streamingLink)}
+          >
             Go to Stream
           </Text>
         </View>
       </Modal>
-      {posterURLPartOne != undefined && !isLoading ? (
-        <View style={{ flexDirection: "row" }}>
-          <FlatList
-            data={posterURLPartOne}
-            renderItem={({ item, index }) => (
-              <TouchableOpacity onPress={handleImageClick}>
-                <View style={styles.item}>
-                  <Text style={styles.number}>{index + 1}</Text>
-                  <Image source={{ uri: item }} style={styles.image} />
-                </View>
-              </TouchableOpacity>
-            )}
-            keyExtractor={(item) => item}
-          />
-          <FlatList
-            data={posterURLPartTwo}
-            renderItem={({ item, index }) => (
-              <TouchableOpacity onPress={handleImageClick}>
-                <View style={styles.item}>
-                  <Text style={styles.number}>{index + 4}</Text>
-                  <Image source={{ uri: item }} style={styles.image} />
-                </View>
-              </TouchableOpacity>
-            )}
-            keyExtractor={(item) => item}
-          />
-        </View>
-      ) : (
-        <ActivityIndicator />
-      )}
+      <View style={{ height: 450 }}>
+        {posterURLPartOne != undefined && !isLoading ? (
+          <View style={{ flexDirection: "row" }}>
+            <FlatList
+              data={posterURLPartOne}
+              renderItem={({ item, index }) => (
+                <TouchableOpacity onPress={handleImageClick}>
+                  <View style={styles.item}>
+                    <Text style={styles.number}>{index + 1}</Text>
+                    <Image source={{ uri: item }} style={styles.image} />
+                  </View>
+                </TouchableOpacity>
+              )}
+              keyExtractor={(item) => item}
+            />
+            <FlatList
+              data={posterURLPartTwo}
+              renderItem={({ item, index }) => (
+                <TouchableOpacity onPress={handleImageClick}>
+                  <View style={styles.item}>
+                    <Text style={styles.number}>{index + 4}</Text>
+                    <Image source={{ uri: item }} style={styles.image} />
+                  </View>
+                </TouchableOpacity>
+              )}
+              keyExtractor={(item) => item}
+            />
+          </View>
+        ) : (
+          <ActivityIndicator />
+        )}
+      </View>
+      <TouchableOpacity
+        style={styles.finishedButton}
+        onPress={() => setRefresh(!refresh)}
+      >
+        <Text style={{ fontSize: 20, color: COLORS.background }}>Refresh</Text>
+      </TouchableOpacity>
       <TouchableOpacity
         style={styles.finishedButton}
         onPress={handleOnPressFinish}
       >
-        <Text style={{ fontSize: 40, color: "#FDDA0D" }}>Finish</Text>
+        <Text style={{ fontSize: 40, color: COLORS.background }}>Finish</Text>
       </TouchableOpacity>
     </View>
   );
@@ -212,8 +254,8 @@ export const Highscore = ({ navigation }: any) => {
 
 const styles = StyleSheet.create({
   finishedButton: {
-    padding: 10,
-    margin: 20,
+    padding: 5,
+    margin: 10,
     backgroundColor: "black",
     borderRadius: 10,
   },
@@ -232,16 +274,15 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   image: {
-    width: 120,
-    height: 120,
+    width: 100,
+    height: 100,
   },
   modalView: {
     margin: 20,
     backgroundColor: COLORS.background,
-    borderRadius: 20,
+    borderRadius: 50,
     padding: 35,
-    top: 200,
-    height: 200,
+    height: "100%",
     alignItems: "center",
     shadowColor: COLORS.main,
     shadowOffset: {
