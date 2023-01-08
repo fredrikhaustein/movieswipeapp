@@ -128,9 +128,8 @@ export const Highscore = ({ navigation }: any) => {
     const unsubscribe = onSnapshot(
       doc(db, "Groups", `${gamePinToGroup}`),
       (doc) => {
-        const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
         const collectedData = doc.data();
-        if (!doc.exists) {
+        if (collectedData == undefined) {
           handleFinishedPress();
         }
       }
@@ -140,10 +139,12 @@ export const Highscore = ({ navigation }: any) => {
     };
   };
 
-  // Makes new request to database every 4 sec to check if someone has pressed finish
   useEffect(() => {
-    handleUnSubscribe();
-  }, [4000]);
+    const interval = setInterval(() => {
+      handleUnSubscribe();
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <View
