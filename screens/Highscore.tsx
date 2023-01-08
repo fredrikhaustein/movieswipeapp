@@ -165,10 +165,13 @@ export const Highscore = ({ navigation }: any) => {
         transparent={true}
         >
           <View style={styles.modalView}>
-            <Text onPress={() => Linking.openURL(streamingLink)}>Go to Stream</Text>
+            <View style={{height: 200}}/>
+            <Text style={styles.textFieldStyle} onPress={() => Linking.openURL(streamingLink)}>Go to Stream</Text>
             
           </View>
       </Modal>
+      <View style={{height: 450}}>
+
       {posterURLPartOne != undefined && !isLoading ? (
         <View style={{ flexDirection: "row" }}>
           <FlatList
@@ -182,7 +185,7 @@ export const Highscore = ({ navigation }: any) => {
               </TouchableOpacity>
             )}
             keyExtractor={(item) => item}
-          />
+            />
           <FlatList
             data={posterURLPartTwo}
             renderItem={({ item, index }) => (
@@ -194,11 +197,12 @@ export const Highscore = ({ navigation }: any) => {
               </TouchableOpacity>
             )}
             keyExtractor={(item) => item}
-          />
+            />
         </View>
       ) : (
         <ActivityIndicator />
-      )}
+        )}
+      </View>
       <TouchableOpacity
         style={styles.finishedButton}
         onPress={() => setRefresh(!refresh)}
@@ -237,16 +241,15 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   image: {
-    width: 120,
-    height: 120,
+    width: 100,
+    height: 100,
   },
   modalView: {
     margin: 20,
     backgroundColor: COLORS.background,
-    borderRadius: 20,
+    borderRadius: 50,
     padding: 35,
-    top: 200,
-    height: 200,
+    height: "100%",
     alignItems: "center",
     shadowColor: COLORS.main,
     shadowOffset: {

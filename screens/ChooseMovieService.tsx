@@ -44,21 +44,21 @@ export const ChooseMovieService = ({ navigation }: any) => {
       }}
     >
       <Text style={{ fontSize: 25 }}>Choose ONE streaming service</Text>
+
       {streamingServiceList.map(({ id, service }, index) => {
         return (
           <CheckBox
-            center
-            key={`${id}`}
-            title={`${service}`}
-            checked={checkedState[index]}
-            onPress={() => handleOnChange(index)}
-            containerStyle={styles.checkboxStyle}
-            textStyle={styles.checkboxTextStyle}
-            wrapperStyle={styles.checkboxWrapper}
+          center
+          key={`${id}`}
+          title={`${service}`}
+          checked={checkedState[index]}
+          onPress={() => handleOnChange(index)}
+          containerStyle={styles.checkboxStyle}
+          textStyle={styles.checkboxTextStyle}
+          wrapperStyle={styles.checkboxWrapper}
           />
-        );
-      })}
-
+          );
+        })}
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("ChooseGenre")}

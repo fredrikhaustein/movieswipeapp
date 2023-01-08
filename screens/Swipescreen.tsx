@@ -9,6 +9,7 @@ import {
   Animated,
   PanResponder,
   ActivityIndicator,
+  Modal,
 } from "react-native";
 import axios from "axios";
 import { Icon } from "@rneui/themed";
@@ -27,6 +28,7 @@ export const SwipeScreen = ({ navigation }: any) => {
   const countRef = useRef(0);
   const pageRef = useRef(1);
   const gamePinToGroup = useStoreGamePin((state) => state.gamePin);
+  const[showLoading, setShowLoading] = useState(true);
   const optionsAxios = {
     method: "GET",
     url: "https://streaming-availability.p.rapidapi.com/search/basic",
@@ -45,6 +47,7 @@ export const SwipeScreen = ({ navigation }: any) => {
     },
   };
   const [moviesAPI, setMoviesAPI] = useState<any>();
+  const [showErrorModule, setShowErrorModule] = useState(false); 
 
   async function getMovies() {
     console.log("Axios");
@@ -60,9 +63,11 @@ export const SwipeScreen = ({ navigation }: any) => {
       .then(function (response: any) {
         // console.log(response.data.results);
         setMoviesAPI(response.data.results);
+        setShowLoading(false)
       })
       .catch(function (error: any) {
         console.error(error);
+        getMovies();
       });
     countRef.current = 0;
     setMovieNumber(countRef.current);
@@ -117,6 +122,8 @@ export const SwipeScreen = ({ navigation }: any) => {
   };
 
   const nextImage = async () => {
+    setShowInfoBool(false)
+    setShowLoading(true)
     if (moviesAPI) {
       if (countRef.current >= moviesAPI.length - 1) {
         pageRef.current = pageRef.current + 1;
@@ -125,9 +132,11 @@ export const SwipeScreen = ({ navigation }: any) => {
       } else {
         countRef.current = countRef.current + 1;
         setMovieNumber(countRef.current);
+        setShowLoading(false)
       }
     }
   };
+
 
   const likeMovie = async (like: boolean) => {
     console.log(like);
@@ -177,9 +186,18 @@ export const SwipeScreen = ({ navigation }: any) => {
           backgroundColor: COLORS.background,
         }}
       >
+        <Modal
+          visible={showErrorModule}
+          animationType="slide"
+          onRequestClose={() => setShowErrorModule(false)}
+          transparent ={true}
+        >
+          <Text>Look's like we had a small error. CLick the button to try again. </Text>
+
+        </Modal>
         {!showInfoBool || moviesAPI === undefined ? (
           <View>
-            {moviesAPI == null ? (
+            {moviesAPI == null || showLoading ? (
               <View>
                 <ActivityIndicator size="large" color={COLORS.main} />
               </View>

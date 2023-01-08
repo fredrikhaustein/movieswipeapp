@@ -59,7 +59,7 @@ export const RandomMovie = () => {
 
   const setRandomParam = (() => {
     const genreLength = genreListSingular.length
-    const genreIndex = Math.floor(Math.random()  * (genreLength + 1))
+    const genreIndex = Math.floor(Math.random()  * (genreLength))
     const page = Math.floor(Math.random() * (4)).toString()
     if (genreList[genreIndex].apiKey === undefined) {
       console.log("Genrelist is undefined. Setting to Comedy")

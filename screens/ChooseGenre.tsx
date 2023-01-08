@@ -1,5 +1,5 @@
 import { CheckBox } from "@rneui/base";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   View,
@@ -38,7 +38,7 @@ export const ChooseGenre = ({ navigation }: any) => {
       }}
     >
       <Text style={{ fontSize: 25 }}>Choose Genre</Text>
-      <ScrollView>
+      <ScrollView style= {{height: 500}}>
         {genreList.map(({ id, service }, index) => {
           return (
             <CheckBox
