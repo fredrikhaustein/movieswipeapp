@@ -14,27 +14,32 @@ import {
 import axios from "axios";
 import { useStoreGamePin } from "../store/MovieFilter";
 import { COLORS } from "../values/colors";
-import { deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  deleteDoc,
+  doc,
+  getDoc,
+  onSnapshot,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { Link } from "@react-navigation/native";
 import { Icon } from "@rneui/base";
 
-
-
-
 export const Highscore = ({ navigation }: any) => {
   const gamePinToGroup = useStoreGamePin((state) => state.gamePin);
   const [isLoading, setIsLoading] = useState(true);
-  const [modalVisible, setModalVisible] = useState(false)
-  const [streamingLink, setStreamingLink] = useState<string>("https://play.hbomax.com");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [streamingLink, setStreamingLink] = useState<string>(
+    "https://play.hbomax.com"
+  );
   const [posterURLPartOne, setPosterURLPartOne] = useState<string[]>();
   const [posterURLPartTwo, setPosterURLPartTwo] = useState<string[]>();
   const streamingLinks = {
-  "netflix": "https://www.netflix.com/",
-  "disney": "https://www.disneyplus.com/",
-  "prime": "https://www.primevideo.com/",
-  "apple": "https://tv.apple.com/",
-}
+    netflix: "https://www.netflix.com/",
+    disney: "https://www.disneyplus.com/",
+    prime: "https://www.primevideo.com/",
+    apple: "https://tv.apple.com/",
+  };
   const posterOptions = {
     method: "GET",
     url: "https://moviesdatabase.p.rapidapi.com/titles/",
@@ -89,19 +94,23 @@ export const Highscore = ({ navigation }: any) => {
     navigation.navigate("Home", { type: "anonymous" });
   };
 
-  const handleImageClick = () =>  {
-    setModalVisible(true)
-  }
+  const handleFinishedPress = () => {
+    navigation.navigate("Home", { type: "anonymous" });
+  };
+
+  const handleImageClick = () => {
+    setModalVisible(true);
+  };
 
   async function getLikesFromDb(): Promise<string[]> {
     const fireBaseDoc = await getDoc(doc(db, "Groups", `${gamePinToGroup}`));
     const likesRest = fireBaseDoc.get("Likes");
-    const service: string = fireBaseDoc.get("MovieService").toString()
+    const service: string = fireBaseDoc.get("MovieService").toString();
     Object.entries(streamingLinks).map(([key, val]) => {
       if (key === service) {
-        setStreamingLink(val)
+        setStreamingLink(val);
       }
-    })
+    });
     likesRest.sort();
     const counts = countElements(likesRest);
     const toplist = getTopList(counts);
@@ -115,7 +124,26 @@ export const Highscore = ({ navigation }: any) => {
     });
   }, []);
 
+  const handleUnSubscribe = () => {
+    const unsubscribe = onSnapshot(
+      doc(db, "Groups", `${gamePinToGroup}`),
+      (doc) => {
+        const source = doc.metadata.hasPendingWrites ? "Local" : "Server";
+        const collectedData = doc.data();
+        if (!doc.exists) {
+          handleFinishedPress();
+        }
+      }
+    );
+    return () => {
+      unsubscribe();
+    };
+  };
 
+  // Makes new request to database every 4 sec to check if someone has pressed finish
+  useEffect(() => {
+    handleUnSubscribe();
+  }, [4000]);
 
   return (
     <View
@@ -129,16 +157,17 @@ export const Highscore = ({ navigation }: any) => {
       <Text style={styles.textFieldStyle}>
         Top Picks for group {gamePinToGroup}
       </Text>
-      <Modal 
+      <Modal
         visible={modalVisible}
         animationType="slide"
         onRequestClose={() => setModalVisible(false)}
         transparent={true}
-        >
-          <View style={styles.modalView}>
-            <Text onPress={() => Linking.openURL(streamingLink)}>Go to Stream</Text>
-            
-          </View>
+      >
+        <View style={styles.modalView}>
+          <Text onPress={() => Linking.openURL(streamingLink)}>
+            Go to Stream
+          </Text>
+        </View>
       </Modal>
       {posterURLPartOne != undefined && !isLoading ? (
         <View style={{ flexDirection: "row" }}>
@@ -216,10 +245,10 @@ const styles = StyleSheet.create({
     shadowColor: COLORS.main,
     shadowOffset: {
       width: 2,
-      height: 6
+      height: 6,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5
+    elevation: 5,
   },
 });
