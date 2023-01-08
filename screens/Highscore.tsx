@@ -238,12 +238,6 @@ export const Highscore = ({ navigation }: any) => {
       </View>
       <TouchableOpacity
         style={styles.finishedButton}
-        onPress={() => setRefresh(!refresh)}
-      >
-        <Text style={{ fontSize: 20, color: COLORS.background }}>Refresh</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.finishedButton}
         onPress={handleOnPressFinish}
       >
         <Text style={{ fontSize: 40, color: COLORS.background }}>Finish</Text>
