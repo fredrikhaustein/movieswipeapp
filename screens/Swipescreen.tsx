@@ -66,6 +66,7 @@ export const SwipeScreen = ({ navigation }: any) => {
     optionsAxios.params.service = "netflix";
     optionsAxios.params.genre = movieGenre;
     optionsAxios.params.page = pageRef.current.toString();
+    let errorCount = 0;
     await axios
       .request(optionsAxios)
       .then(function (response: any) {
@@ -75,7 +76,11 @@ export const SwipeScreen = ({ navigation }: any) => {
       })
       .catch(function (error: any) {
         console.error(error);
-        getMovies();
+        if (errorCount < 2) {
+          getMovies();
+        } else {
+          errorCount = errorCount + 1;
+        }
       });
     countRef.current = 0;
     setMovieNumber(countRef.current);

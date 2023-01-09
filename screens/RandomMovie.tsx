@@ -17,7 +17,7 @@ import { genreList, genreListSingular } from "../utils/genreSelectionList";
 import { randomInt } from "crypto";
 import { LinkingContext } from "@react-navigation/native";
 
-export const RandomMovie = () => {
+export const RandomMovie = ({ navigation }: any) => {
   const [isInfo, setShowInfo] = useState(false);
   const [randomMovie, setRandomMovie] = useState();
   const [refresh, setRefresh] = useState(false);
@@ -42,6 +42,7 @@ export const RandomMovie = () => {
 
   async function getMovies() {
     console.log("Axios");
+    let errorCount = 0;
     await axios
       .request(optionsAxios)
       .then(function (response: any) {
@@ -54,8 +55,18 @@ export const RandomMovie = () => {
       .catch(function (error: any) {
         console.error(error);
         setRefresh(!refresh);
+        if (errorCount < 2) {
+          setRefresh(!refresh);
+        } else {
+          errorCount = errorCount + 1;
+        }
       });
   }
+
+  const handleOnPressRandomMovie = () => {
+    Linking.openURL(randomMovie!["streamingInfo"]["netflix"]["it"]["link"]);
+    navigation.navigate("Home");
+  };
 
   const setRandomParam = () => {
     const genreLength = genreListSingular.length;
@@ -92,9 +103,6 @@ export const RandomMovie = () => {
     >
       {!isInfo || randomMovie === undefined ? (
         <View>
-          <Text style={{ fontSize: 25, textAlign: "center", margin: 20 }}>
-            Your movie:
-          </Text>
           {randomMovie == null || showActivityIndicator ? (
             <View style={{ height: 500 }}>
               <View style={{ height: 250 }} />
@@ -146,11 +154,7 @@ export const RandomMovie = () => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
-          onPress={() =>
-            Linking.openURL(
-              randomMovie!["streamingInfo"]["netflix"]["it"]["link"]
-            )
-          }
+          onPress={handleOnPressRandomMovie}
         >
           <Icon name="check" color={COLORS.background} />
         </TouchableOpacity>
