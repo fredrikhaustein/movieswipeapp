@@ -53,7 +53,7 @@ export default function App() {
           component={CreateNewGroup}
           options={{
             headerShown: true,
-            title: "Choose Genre",
+            title: "Choose Movieservice",
             headerTintColor: COLORS.main,
             headerStyle: {
               backgroundColor: COLORS.background,

@@ -20,7 +20,7 @@ import { db } from "../firebaseConfig";
 import InfoAboutFilmView from "../components/ScreenInScreen/InfoAboutFilmView";
 
 export const SwipeScreen = ({ navigation }: any) => {
-  const nrOfMovies = 2;
+  const nrOfMovies = 8;
   const [lengthDisLikeAndLike, setLengthDisLikeAndLike] = useState<number>(0);
   const gotDataRef = useRef(false);
   const [showInfoBool, setShowInfoBool] = useState<boolean>(false);
@@ -28,7 +28,7 @@ export const SwipeScreen = ({ navigation }: any) => {
   const countRef = useRef(0);
   const pageRef = useRef(1);
   const gamePinToGroup = useStoreGamePin((state) => state.gamePin);
-  const[showLoading, setShowLoading] = useState(true);
+  const [showLoading, setShowLoading] = useState(true);
   const optionsAxios = {
     method: "GET",
     url: "https://streaming-availability.p.rapidapi.com/search/basic",
@@ -47,7 +47,15 @@ export const SwipeScreen = ({ navigation }: any) => {
     },
   };
   const [moviesAPI, setMoviesAPI] = useState<any>();
-  const [showErrorModule, setShowErrorModule] = useState(false); 
+  const [showErrorModule, setShowErrorModule] = useState(false);
+  const [userCount, setUserCount] = useState<number>();
+
+  async function getUsersCount() {
+    const fireBaseDoc = await getDoc(doc(db, "Groups", `${gamePinToGroup}`));
+    const users = fireBaseDoc.get("Users");
+    console.log("THIS IS USERS:", users);
+    setUserCount(users.length);
+  }
 
   async function getMovies() {
     console.log("Axios");
@@ -63,7 +71,7 @@ export const SwipeScreen = ({ navigation }: any) => {
       .then(function (response: any) {
         // console.log(response.data.results);
         setMoviesAPI(response.data.results);
-        setShowLoading(false)
+        setShowLoading(false);
       })
       .catch(function (error: any) {
         console.error(error);
@@ -112,7 +120,9 @@ export const SwipeScreen = ({ navigation }: any) => {
   }, []);
 
   useEffect(() => {
-    if (lengthDisLikeAndLike >= 16) {
+    if (userCount && lengthDisLikeAndLike >= nrOfMovies * userCount) {
+      showHighScore();
+    } else if (lengthDisLikeAndLike >= 16) {
       showHighScore();
     }
   }, [lengthDisLikeAndLike]);
@@ -122,8 +132,8 @@ export const SwipeScreen = ({ navigation }: any) => {
   };
 
   const nextImage = async () => {
-    setShowInfoBool(false)
-    setShowLoading(true)
+    setShowInfoBool(false);
+    setShowLoading(true);
     if (moviesAPI) {
       if (countRef.current >= moviesAPI.length - 1) {
         pageRef.current = pageRef.current + 1;
@@ -132,11 +142,11 @@ export const SwipeScreen = ({ navigation }: any) => {
       } else {
         countRef.current = countRef.current + 1;
         setMovieNumber(countRef.current);
-        setShowLoading(false)
+        setShowLoading(false);
       }
     }
+    getUsersCount();
   };
-
 
   const likeMovie = async (like: boolean) => {
     console.log(like);
@@ -190,10 +200,11 @@ export const SwipeScreen = ({ navigation }: any) => {
           visible={showErrorModule}
           animationType="slide"
           onRequestClose={() => setShowErrorModule(false)}
-          transparent ={true}
+          transparent={true}
         >
-          <Text>Look's like we had a small error. CLick the button to try again. </Text>
-
+          <Text>
+            Look's like we had a small error. CLick the button to try again.{" "}
+          </Text>
         </Modal>
         {!showInfoBool || moviesAPI === undefined ? (
           <View>

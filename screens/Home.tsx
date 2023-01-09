@@ -40,10 +40,7 @@ export const HomeScreen = ({ navigation }: any) => {
     console.log(bool);
     if (!bool) {
       await updateDoc(doc(db, "Groups", `${groupID}`), {
-        Users: arrayUnion({
-          UserID: `${firebaseAuth.currentUser?.uid}`,
-          userCurrentPage: 0,
-        }),
+        Users: arrayUnion(`${firebaseAuth.currentUser?.uid}`),
       }).catch((error) => {
         console.log(error.message);
       });

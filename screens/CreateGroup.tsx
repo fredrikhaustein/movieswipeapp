@@ -9,7 +9,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { db, firebaseAuth } from "../firebaseConfig";
-import { genreateGroupID } from "../utils/genreateGroupID";
+import { generateGroupID } from "../utils/genrateGroupID";
 import { useStoreGamePin, useStoreMovieFilters } from "../store/MovieFilter";
 import { signInAnonymously } from "firebase/auth";
 import { COLORS } from "../values/colors";
@@ -48,7 +48,7 @@ export const CreateGroup = ({ navigation }: any) => {
   };
 
   const handleOnPressCreateGroup = async () => {
-    const newgroupID = genreateGroupID();
+    const newgroupID = generateGroupID();
     setGroupID(newgroupID);
     const allGroupIds: string[] = [];
 
