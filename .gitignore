@@ -13,3 +13,7 @@ web-build/
 
 # macOS
 .DS_Store
+.firebaseConfig.ts
+.metro.config.js
+.babel.config.js
+
