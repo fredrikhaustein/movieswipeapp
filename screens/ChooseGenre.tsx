@@ -24,7 +24,7 @@ export const ChooseGenre = ({ navigation }: any) => {
       index === position ? true : false
     );
     setCheckedState(updatedCheckedState);
-    console.log("DETTE ER GENRE::::::::", genreList[position]["apiKey"]);
+    console.log("GENRE:", genreList[position]["apiKey"]);
     setGenre(genreList[position]["apiKey"]);
   };
 
@@ -37,8 +37,8 @@ export const ChooseGenre = ({ navigation }: any) => {
         backgroundColor: COLORS.background,
       }}
     >
-      <Text style={{ fontSize: 25 }}>Choose Genre</Text>
-      <ScrollView style= {{height: 500}}>
+      <Text style={{ fontSize: 25, marginTop: 15 }}>Choose Genre</Text>
+      <ScrollView style={{ height: 500 }}>
         {genreList.map(({ id, service }, index) => {
           return (
             <CheckBox
@@ -68,15 +68,16 @@ export default ChooseGenre;
 
 const styles = StyleSheet.create({
   checkboxStyle: {
-    margin: 15,
+    margin: 10,
     backgroundColor: COLORS.background,
-    width: 250,
+    width: "100%",
+    marginLeft: 85,
   },
   checkboxTextStyle: {
     fontSize: 20,
   },
   checkboxWrapper: {
-    alignSelf: "flex-start",
+    alignSelf: "baseline",
   },
   textField_button: {
     padding: 10,
@@ -93,6 +94,6 @@ const styles = StyleSheet.create({
     borderColor: COLORS.main,
     backgroundColor: COLORS.main,
     borderRadius: 10,
-    margin: 10,
+    marginBottom: 30,
   },
 });

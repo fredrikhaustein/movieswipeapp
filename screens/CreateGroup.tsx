@@ -9,7 +9,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { db, firebaseAuth } from "../firebaseConfig";
-import { genreateGroupID } from "../utils/genreateGroupID";
+import { generateGroupID } from "../utils/genrateGroupID";
 import { useStoreGamePin, useStoreMovieFilters } from "../store/MovieFilter";
 import { signInAnonymously } from "firebase/auth";
 import { COLORS } from "../values/colors";
@@ -48,7 +48,7 @@ export const CreateGroup = ({ navigation }: any) => {
   };
 
   const handleOnPressCreateGroup = async () => {
-    const newgroupID = genreateGroupID();
+    const newgroupID = generateGroupID();
     setGroupID(newgroupID);
     const allGroupIds: string[] = [];
 
@@ -57,12 +57,6 @@ export const CreateGroup = ({ navigation }: any) => {
       allGroupIds.push(doc.id);
     });
 
-    // Sjekke at gruppe ikke eksisterer
-    // if (allGroupIds.includes(groupID!.toString())) {
-    //   setGroupID(genreateGroupID());
-    // }
-
-    console.log("Dette er gruppeid", newgroupID);
     if (newgroupID) {
       await setDoc(doc(db, "Groups", `${newgroupID!.toString()}`), {
         MovieService: `${selectedMovieService}`,
@@ -76,8 +70,6 @@ export const CreateGroup = ({ navigation }: any) => {
       setGamePin(newgroupID.toString());
     }
     handleSignIn();
-    console.log(selectedGenreList);
-    console.log(selectedMovieService);
   };
 
   const handleOnPressStart = () => {

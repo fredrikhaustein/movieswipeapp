@@ -21,10 +21,11 @@ import {
   onSnapshot,
   updateDoc,
 } from "firebase/firestore";
-import { db } from "../firebaseConfig";
+import { db, firebaseAuth } from "../firebaseConfig";
 import { Link } from "@react-navigation/native";
 import { Icon } from "@rneui/base";
 import { link } from "fs";
+import { signOut } from "firebase/auth";
 
 export const Highscore = ({ navigation }: any) => {
   const gamePinToGroup = useStoreGamePin((state) => state.gamePin);
@@ -51,6 +52,10 @@ export const Highscore = ({ navigation }: any) => {
       "X-RapidAPI-Key": "edab4e7123msh8344a8f5fa69601p18c787jsnfaff8cc039db",
       "X-RapidAPI-Host": "moviesdatabase.p.rapidapi.com",
     },
+  };
+
+  const handleSignOut = () => {
+    signOut(firebaseAuth);
   };
 
   function countElements(lst: any[]): { [key: string]: number } {
@@ -81,7 +86,6 @@ export const Highscore = ({ navigation }: any) => {
     const posters = await Promise.all(postersPromise);
     setPosterURLPartOne(posters.slice(0, 3));
     setPosterURLPartTwo(posters.slice(3, 6));
-    console.log("#####");
     // const posters: string[] = [];
     // toplist.forEach(async (imdbId) => {
     //   console.log(imdbId)
@@ -121,10 +125,12 @@ export const Highscore = ({ navigation }: any) => {
 
   const handleOnPressFinish = async () => {
     await deleteDoc(doc(db, "Groups", `${gamePinToGroup}`));
+    handleSignOut();
     navigation.navigate("Home", { type: "anonymous" });
   };
 
   const handleFinishedPress = () => {
+    handleSignOut();
     navigation.navigate("Home", { type: "anonymous" });
   };
 

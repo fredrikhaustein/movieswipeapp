@@ -43,22 +43,22 @@ export const ChooseMovieService = ({ navigation }: any) => {
         backgroundColor: COLORS.background,
       }}
     >
-      <Text style={{ fontSize: 25 }}>Choose ONE streaming service</Text>
+      <Text style={{ fontSize: 25 }}>Choose Streaming Service</Text>
 
       {streamingServiceList.map(({ id, service }, index) => {
         return (
           <CheckBox
-          center
-          key={`${id}`}
-          title={`${service}`}
-          checked={checkedState[index]}
-          onPress={() => handleOnChange(index)}
-          containerStyle={styles.checkboxStyle}
-          textStyle={styles.checkboxTextStyle}
-          wrapperStyle={styles.checkboxWrapper}
+            center
+            key={`${id}`}
+            title={`${service}`}
+            checked={checkedState[index]}
+            onPress={() => handleOnChange(index)}
+            containerStyle={styles.checkboxStyle}
+            textStyle={styles.checkboxTextStyle}
+            wrapperStyle={styles.checkboxWrapper}
           />
-          );
-        })}
+        );
+      })}
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("ChooseGenre")}
@@ -73,15 +73,15 @@ export default ChooseMovieService;
 
 const styles = StyleSheet.create({
   checkboxStyle: {
-    margin: 15,
+    margin: 10,
     backgroundColor: COLORS.background,
-    width: 250,
+    width: "100%",
   },
   checkboxTextStyle: {
     fontSize: 20,
   },
   checkboxWrapper: {
-    alignSelf: "flex-start",
+    alignSelf: "center",
   },
   textField_button: {
     padding: 10,
