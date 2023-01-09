@@ -242,7 +242,6 @@ export const Highscore = ({ navigation }: any) => {
           <ActivityIndicator />
         )}
       </View>
-
       <TouchableOpacity
         style={styles.finishedButton}
         onPress={handleOnPressFinish}

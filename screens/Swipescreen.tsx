@@ -213,7 +213,7 @@ export const SwipeScreen = ({ navigation }: any) => {
         </Modal>
         {!showInfoBool || moviesAPI === undefined ? (
           <View>
-            {moviesAPI == null || showLoading ? (
+            {showLoading ? (
               <View>
                 <ActivityIndicator size="large" color={COLORS.main} />
               </View>
