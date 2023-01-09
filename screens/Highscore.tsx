@@ -49,7 +49,7 @@ export const Highscore = ({ navigation }: any) => {
     method: "GET",
     url: "https://moviesdatabase.p.rapidapi.com/titles/",
     headers: {
-      "X-RapidAPI-Key": "edab4e7123msh8344a8f5fa69601p18c787jsnfaff8cc039db",
+      "X-RapidAPI-Key": "WRITE YOUR KEY HERE",
       "X-RapidAPI-Host": "moviesdatabase.p.rapidapi.com",
     },
   };
