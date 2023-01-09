@@ -41,7 +41,7 @@ export default function App() {
           component={ChooseGenre}
           options={{
             headerShown: true,
-            title: "Choose Genre",
+            title: "",
             headerTintColor: COLORS.main,
             headerStyle: {
               backgroundColor: COLORS.background,
@@ -53,7 +53,7 @@ export default function App() {
           component={CreateNewGroup}
           options={{
             headerShown: true,
-            title: "Choose Movieservice",
+            title: "",
             headerTintColor: COLORS.main,
             headerStyle: {
               backgroundColor: COLORS.background,
@@ -89,7 +89,7 @@ export default function App() {
           component={RandomMovie}
           options={{
             headerShown: true,
-            title: "Random Movie",
+            title: "",
             headerTintColor: COLORS.main,
             headerStyle: {
               backgroundColor: COLORS.background,
