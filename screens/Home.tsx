@@ -33,11 +33,9 @@ export const HomeScreen = ({ navigation }: any) => {
   const handleAddUserToFireStore = async () => {
     const fireBaseDoc = await getDoc(doc(db, "Groups", `${gamePinToGroup}`));
     const users = fireBaseDoc.get("Users");
-    console.log("USERS HOME SCREEN", users);
     const bool = users.some(
       (user: any) => user["UserID"] == firebaseAuth.currentUser?.uid
     );
-    console.log(bool);
     if (!bool) {
       await updateDoc(doc(db, "Groups", `${groupID}`), {
         Users: arrayUnion(`${firebaseAuth.currentUser?.uid}`),
@@ -48,15 +46,12 @@ export const HomeScreen = ({ navigation }: any) => {
   };
 
   const handleOnJoinGroup = async () => {
-    console.log("here is your groupid", groupID);
-
     const allGroupIds: string[] = [];
 
     const querySnapshot = await getDocs(collection(db, "Groups"));
     querySnapshot.forEach((doc) => {
       allGroupIds.push(doc.id);
     });
-    console.log(allGroupIds);
 
     if (groupID && allGroupIds.includes(groupID)) {
       handleSignIn();

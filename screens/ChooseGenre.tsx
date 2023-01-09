@@ -24,7 +24,7 @@ export const ChooseGenre = ({ navigation }: any) => {
       index === position ? true : false
     );
     setCheckedState(updatedCheckedState);
-    console.log("DETTE ER GENRE:", genreList[position]["apiKey"]);
+    console.log("GENRE:", genreList[position]["apiKey"]);
     setGenre(genreList[position]["apiKey"]);
   };
 
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     margin: 10,
     backgroundColor: COLORS.background,
     width: "100%",
-    marginLeft: 105,
+    marginLeft: 85,
   },
   checkboxTextStyle: {
     fontSize: 20,

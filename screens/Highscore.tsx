@@ -86,7 +86,6 @@ export const Highscore = ({ navigation }: any) => {
     const posters = await Promise.all(postersPromise);
     setPosterURLPartOne(posters.slice(0, 3));
     setPosterURLPartTwo(posters.slice(3, 6));
-    console.log("#####");
     // const posters: string[] = [];
     // toplist.forEach(async (imdbId) => {
     //   console.log(imdbId)
@@ -243,12 +242,7 @@ export const Highscore = ({ navigation }: any) => {
           <ActivityIndicator />
         )}
       </View>
-      <TouchableOpacity
-        style={styles.finishedButton}
-        onPress={() => setRefresh(!refresh)}
-      >
-        <Text style={{ fontSize: 20, color: COLORS.background }}>Refresh</Text>
-      </TouchableOpacity>
+
       <TouchableOpacity
         style={styles.finishedButton}
         onPress={handleOnPressFinish}
