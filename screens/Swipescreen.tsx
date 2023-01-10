@@ -36,7 +36,7 @@ export const SwipeScreen = ({ navigation }: any) => {
       country: "it",
       service: "netflix",
       type: "movie",
-      genre: "18",
+      genre: "28",
       page: "1",
       output_language: "en",
       language: "en",
