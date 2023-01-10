@@ -10,7 +10,6 @@ import ChooseGenre from "./screens/ChooseGenre";
 import CreateGroup from "./screens/CreateGroup";
 import { Highscore } from "./screens/Highscore";
 import { COLORS } from "./values/colors";
-import { Colors } from "react-native/Libraries/NewAppScreen";
 import { RandomMovie } from "./screens/RandomMovie";
 
 export default function App() {

@@ -33,10 +33,10 @@ export const HomeScreen = ({ navigation }: any) => {
   const handleAddUserToFireStore = async () => {
     const fireBaseDoc = await getDoc(doc(db, "Groups", `${gamePinToGroup}`));
     const users = fireBaseDoc.get("Users");
-    const bool = users.some(
-      (user: any) => user["UserID"] == firebaseAuth.currentUser?.uid
-    );
-    if (!bool) {
+    // const bool = users.some(
+    //   (user: any) => user["UserID"] == firebaseAuth.currentUser?.uid
+    // );
+    if (true) {
       await updateDoc(doc(db, "Groups", `${groupID}`), {
         Users: arrayUnion(`${firebaseAuth.currentUser?.uid}`),
       }).catch((error) => {
@@ -53,11 +53,12 @@ export const HomeScreen = ({ navigation }: any) => {
       allGroupIds.push(doc.id);
     });
 
-    if (groupID && allGroupIds.includes(groupID)) {
+    console.log("HERERERERER", groupID);
+    if (groupID) {
+      setGamePin(groupID);
       handleSignIn();
       handleAddUserToFireStore();
       navigation.navigate("SwipeScreen");
-      setGamePin(groupID);
     } else {
       setErrorWithGroupID(true);
     }

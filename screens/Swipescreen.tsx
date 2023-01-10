@@ -63,7 +63,8 @@ export const SwipeScreen = ({ navigation }: any) => {
     const movieService = fireBaseDoc.get("MovieService");
     const movieGenre = fireBaseDoc.get("Genre");
     console.log("Service", movieService);
-    optionsAxios.params.service = "netflix";
+    console.log("GENRE:", movieGenre);
+    optionsAxios.params.service = movieService;
     optionsAxios.params.genre = movieGenre;
     optionsAxios.params.page = pageRef.current.toString();
     let errorCount = 0;
