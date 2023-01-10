@@ -54,9 +54,9 @@ export const Highscore = ({ navigation }: any) => {
     },
   };
 
-  const handleSignOut = () => {
-    signOut(firebaseAuth);
-  };
+  // const handleSignOut = () => {
+  //   signOut(firebaseAuth);
+  // };
 
   function countElements(lst: any[]): { [key: string]: number } {
     const count: { [key: string]: number } = {};
@@ -125,12 +125,12 @@ export const Highscore = ({ navigation }: any) => {
 
   const handleOnPressFinish = async () => {
     await deleteDoc(doc(db, "Groups", `${gamePinToGroup}`));
-    handleSignOut();
+    // handleSignOut();
     navigation.navigate("Home", { type: "anonymous" });
   };
 
   const handleFinishedPress = () => {
-    handleSignOut();
+    // handleSignOut();
     navigation.navigate("Home", { type: "anonymous" });
   };
 
@@ -200,15 +200,26 @@ export const Highscore = ({ navigation }: any) => {
         onRequestClose={() => setModalVisible(false)}
         transparent={true}
       >
-        <View style={styles.modalView}>
-          <View style={{ height: 200 }} />
-          <Text
-            style={styles.textFieldStyle}
-            onPress={() => Linking.openURL(streamingLink)}
-          >
-            Go to Stream
-          </Text>
-        </View>
+        <TouchableOpacity
+          onPressOut={() => {
+            setModalVisible(false);
+          }}
+        >
+          <View style={{ height: "100%" }}>
+            <View style={styles.modalView}>
+              <Text
+                style={{
+                  color: COLORS.background,
+                  fontSize: 25,
+                  textAlign: "center",
+                }}
+                onPress={() => Linking.openURL(streamingLink)}
+              >
+                Go to Stream
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
       </Modal>
       <View style={{ height: 450 }}>
         {posterURLPartOne != undefined && !isLoading ? (
@@ -279,11 +290,13 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    backgroundColor: COLORS.background,
+    marginTop: "50%",
+    marginBottom: "10%",
+    backgroundColor: COLORS.main,
+    justifyContent:"center",
     borderRadius: 50,
     padding: 35,
-    height: "100%",
-    alignItems: "center",
+    height: "60%",
     shadowColor: COLORS.main,
     shadowOffset: {
       width: 2,
