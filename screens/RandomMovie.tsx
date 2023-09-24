@@ -35,7 +35,7 @@ export const RandomMovie = ({ navigation }: any) => {
       language: "en",
     },
     headers: {
-      "X-RapidAPI-Key": "edab4e7123msh8344a8f5fa69601p18c787jsnfaff8cc039db",
+      "X-RapidAPI-Key": process.env.REACT_APP_X_RapidAPI_Host,
       "X-RapidAPI-Host": "streaming-availability.p.rapidapi.com",
     },
   };
